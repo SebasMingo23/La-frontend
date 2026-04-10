@@ -1,0 +1,30 @@
+// Official 25 animals of the "Juego del Bicho" lottery
+export const animals = [
+  { id: 1, name: "Avestruz", number: "01", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%C3%B1andu-iconos-animales-dorado-PbL6BE7SFbYVKxpNsQOGUeaJbYloNG.png" },
+  { id: 2, name: "Águila", number: "02", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/aguila-iconos-animales-dorado-mgEeRjVjqAfNssbgtMvXF62KblBja3.png" },
+  { id: 3, name: "Burro", number: "03", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/caballo-iconos-animales-dorado-ho4lnH4LyGVAB1dCtP6knDV2RTbbqL.png" },
+  { id: 4, name: "Mariposa", number: "04", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mariposa-iconos-animales-dorado-aAt84RVDDEkohHW0uhrBOmm5VqkLN3.png" },
+  { id: 5, name: "Perro", number: "05", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/perro-iconos-animales-dorado-VMfjsip9MmXlWNRCcS8AHy5RCjGVVV.png" },
+  { id: 6, name: "Cabra", number: "06", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cabra-iconos-animales-dorado-czvzWeyOfmfgPARrhfhKMC0qEwRxa2.png" },
+  { id: 7, name: "Oveja", number: "07", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/oveja-iconos-animales-dorado-fudDVXABPIib8F7kRmiCyGTmQCcvlo.png" },
+  { id: 8, name: "Camello", number: "08", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/camello-iconos-animales-dorado-BWyPLIT0Vl24qCJxrxZVF9hykQF40G.png" },
+  { id: 9, name: "Cobra", number: "09", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cobra-iconos-animales-dorado-6QuyGSg8AXHAJ7jX2Ulh1BtAcydkwI.png" },
+  { id: 10, name: "Conejo", number: "10", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/gato-iconos-animales-dorado-lipBLTk7rZecVykrBDidOkGPP7Bfqe.png" },
+  { id: 11, name: "Caballo", number: "11", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/caballo-iconos-animales-dorado-ho4lnH4LyGVAB1dCtP6knDV2RTbbqL.png" },
+  { id: 12, name: "Elefante", number: "12", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/oso-iconos-animales-dorado-rhZ40oqleZj5Bail9NFuLclm12Fq12.png" },
+  { id: 13, name: "Gallo", number: "13", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/gallina-iconos-animales-dorado-eg79sk1Ou1GvuQYzRYy0A740wMsuEn.png" },
+  { id: 14, name: "Gato", number: "14", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/gato-iconos-animales-dorado-lipBLTk7rZecVykrBDidOkGPP7Bfqe.png" },
+  { id: 15, name: "Jacaré", number: "15", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cobra-iconos-animales-dorado-6QuyGSg8AXHAJ7jX2Ulh1BtAcydkwI.png" },
+  { id: 16, name: "León", number: "16", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/leon-iconos-animales-dorado-rtFAoATDdjADvxCDRWFjaaVDIZuo1B.png" },
+  { id: 17, name: "Mono", number: "17", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mono-iconos-animales-dorado-NJJLA21lDbq1x7V505EuyyTmkKPYpW.png" },
+  { id: 18, name: "Chancho", number: "18", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/chancho-iconos-animales-dorado-IsxHnBcizEr59b5DfxQqaTYGQhbtmw.png" },
+  { id: 19, name: "Pavo", number: "19", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pavo-iconos-animales-dorado-z2kdB0M6NFv7iquBAQ0IEcUUvQdvAc.png" },
+  { id: 20, name: "Pavo Real", number: "20", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/gallina-iconos-animales-dorado-eg79sk1Ou1GvuQYzRYy0A740wMsuEn.png" },
+  { id: 21, name: "Toro", number: "21", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/toro-iconos-animales-dorado-F6AG6syUIVMYCzWrBTXegKTqiFJRBX.png" },
+  { id: 22, name: "Tigre", number: "22", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/leon-iconos-animales-dorado-rtFAoATDdjADvxCDRWFjaaVDIZuo1B.png" },
+  { id: 23, name: "Oso", number: "23", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/oso-iconos-animales-dorado-rhZ40oqleZj5Bail9NFuLclm12Fq12.png" },
+  { id: 24, name: "Venado", number: "24", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cabra-iconos-animales-dorado-czvzWeyOfmfgPARrhfhKMC0qEwRxa2.png" },
+  { id: 25, name: "Vaca", number: "25", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/vaca-iconos-animales-dorado-zCIQFXqIRC0CjJOW81Azt1inleoiBg.png" },
+] as const
+
+export type Animal = typeof animals[number]
