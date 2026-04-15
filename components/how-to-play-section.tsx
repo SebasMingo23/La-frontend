@@ -53,14 +53,14 @@ export function HowToPlaySection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1E2B3E]/10 text-[#1E2B3E] text-sm font-semibold uppercase tracking-wide mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a1a1a]/10 text-[#1a1a1a] text-sm font-semibold uppercase tracking-wide mb-6">
             <Dices size={16} />
             Fácil y Rápido
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1E2B3E] uppercase tracking-tighter mb-4 font-[var(--font-oswald)]">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1a1a1a] uppercase tracking-tighter mb-4 font-[var(--font-gunterz)]">
             ¿Cómo <span className="text-primary">Jugar</span>?
           </h2>
-          <p className="text-[#1E2B3E]/70 text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-[#1a1a1a]/70 text-lg md:text-xl max-w-2xl mx-auto">
             En solo 4 simples pasos puedes convertirte en el próximo ganador
           </p>
         </motion.div>
@@ -77,9 +77,9 @@ export function HowToPlaySection() {
               whileHover={{ y: -8 }}
               className="group"
             >
-              <div className="bg-[#1E2B3E] rounded-3xl p-8 h-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all duration-300">
+              <div className="bg-[#2B2B2B] rounded-3xl p-8 h-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300 border border-[#FFCC00]/[0.06]">
                 {/* Step Number */}
-                <div className="text-6xl font-bold text-primary/20 mb-4 font-[var(--font-oswald)]">
+                <div className="text-6xl font-bold text-primary/20 mb-4 font-[var(--font-gunterz)]">
                   {step.step}
                 </div>
 
@@ -89,7 +89,7 @@ export function HowToPlaySection() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-xl font-bold text-foreground uppercase tracking-tight mb-3 font-[var(--font-oswald)]">
+                <h3 className="text-xl font-bold text-foreground uppercase tracking-tight mb-3 font-[var(--font-gunterz)]">
                   {step.title}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
@@ -101,7 +101,7 @@ export function HowToPlaySection() {
         </div>
 
         {/* Connecting Line (Desktop) */}
-        <div className="hidden lg:block absolute top-1/2 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-[#1E2B3E]/20 -z-10" />
+        <div className="hidden lg:block absolute top-1/2 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-[#1a1a1a]/20 -z-10" />
       </div>
     </section>
   )

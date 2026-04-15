@@ -140,14 +140,36 @@ function OracleLoading() {
   )
 }
 
+// ID del último animal ganador — estado "★ HOY" en la grilla
+// TODO: recibir como prop desde page.tsx cuando el endpoint retorne el último resultado
+const WINNER_ANIMAL_ID = 2 // Águila #02
+
 /** Card pequeña de la grilla de 25 animales */
 function AnimalCard({ entry }: { entry: DreamEntry }) {
   const imageSrc = resolveImage(entry)
+  const isWinner = entry.id === WINNER_ANIMAL_ID
 
   return (
-    <div className="flex flex-col items-center gap-2 bg-[#1a2535]/80 border border-[#F5B500]/15
-                    hover:border-[#F5B500]/50 rounded-[1.5rem] p-3 transition-colors duration-200">
-      <div className="w-12 h-12 shrink-0">
+    <div className={`
+      relative flex flex-col items-center gap-2 rounded-[1.25rem] p-4 cursor-pointer
+      transition-all duration-200 hover:-translate-y-0.5
+      ${isWinner
+        ? "bg-gradient-to-b from-[#2B2B2B] to-[#1f2d1f] border border-[#009640]/50 shadow-[0_0_0_1px_rgba(0,150,64,0.3),0_8px_30px_rgba(0,150,64,0.15)]"
+        : "bg-[#2B2B2B] border border-[#FFCC00]/[0.08] hover:bg-[#333] hover:border-[#FFCC00]/45 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,204,0,0.3),0_0_20px_rgba(255,204,0,0.06)]"
+      }
+    `}>
+      {/* Brillo superior sutil */}
+      <div className="absolute top-0 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[rgba(255,204,0,0.15)] to-transparent" />
+
+      {/* Badge "★ HOY" en ganador */}
+      {isWinner && (
+        <span className="absolute top-1.5 right-1.5 text-[9px] font-extrabold text-[#009640]
+                         bg-[#009640]/12 px-1.5 py-0.5 rounded tracking-[0.05em] leading-none">
+          ★ HOY
+        </span>
+      )}
+
+      <div className="w-12 h-12 shrink-0 sm:w-10 sm:h-10">
         {imageSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -162,15 +184,18 @@ function AnimalCard({ entry }: { entry: DreamEntry }) {
         )}
       </div>
 
-      <p className="text-xs font-semibold text-white uppercase tracking-wide
+      <p className="text-[0.625rem] font-bold text-white/75 uppercase tracking-[0.08em]
                     font-[var(--font-gunterz)] text-center leading-tight">
         {entry.name}
       </p>
 
-      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0
-                      bg-gradient-to-b from-primary to-[#CC6200]
-                      shadow-[0_3px_10px_rgba(255,122,0,0.45),inset_0_1px_0_rgba(255,255,255,0.2)]">
-        <span className="text-xs font-bold text-white font-[var(--font-gunterz)] leading-none">
+      <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0
+                       shadow-[0_2px_8px_rgba(245,130,32,0.4)]
+                       ${isWinner
+                         ? "bg-[#009640] shadow-[0_0_12px_rgba(0,150,64,0.6)]"
+                         : "bg-[#F58220]"
+                       }`}>
+        <span className="text-[0.6875rem] font-extrabold text-white font-[var(--font-gunterz)] leading-none">
           {entry.number}
         </span>
       </div>
@@ -266,10 +291,10 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
   }
 
   return (
-    <section id="suenos" className="relative py-20 md:py-28 bg-loteria-orange overflow-hidden">
+    <section id="suenos" className="relative py-20 md:py-28 bg-[#222222] overflow-hidden">
       {/* Background blobs */}
-      <div className="absolute top-10 right-10 w-72 h-72 bg-loteria-dark/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-64 h-64 bg-loteria-dark/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 right-10 w-72 h-72 bg-[#FFCC00]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#009640]/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -296,8 +321,10 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
         {/* ── Panel del Oráculo ── */}
         <div className="max-w-2xl mx-auto mb-10">
           {!result ? (
-            <div className="bg-[#1a2535]/90 border border-white/10 rounded-[2rem]
-                            p-6 shadow-[0_12px_40px_rgba(0,0,0,0.4)]">
+            <div className="oraculo-panel">
+              <div className="relative bg-[rgba(255,255,255,0.03)] rounded-[2rem] p-6
+                              backdrop-blur-[24px]
+                              shadow-[0_8px_40px_rgba(0,0,0,0.5),inset_0_0_40px_rgba(255,204,0,0.04),inset_0_2px_0_rgba(255,204,0,0.08)]">
 
               {/* Textarea */}
               <textarea
@@ -314,18 +341,18 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
               />
 
               <div className="flex items-center justify-between gap-3">
-                <p className="text-white/30 text-xs">
-                  {canInterpret ? "Ctrl+Enter para interpretar" : "Escribí tu sueño…"}
+                <p className="hidden sm:block text-white/30 text-xs">
+                  {canInterpret ? "Ctrl+Enter para interpretar" : ""}
                 </p>
 
                 <button
                   onClick={handleInterpret}
                   disabled={!canInterpret || loading}
                   className={`
-                    flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm
-                    uppercase tracking-wide transition-all
+                    flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl font-bold text-sm
+                    uppercase tracking-[0.08em] transition-all duration-200
                     ${canInterpret && !loading
-                      ? "bg-gradient-to-r from-primary to-[#CC6200] text-white shadow-[0_4px_20px_rgba(255,122,0,0.5)] hover:shadow-[0_6px_28px_rgba(255,122,0,0.7)] cursor-pointer"
+                      ? "bg-gradient-to-br from-[#F58220] to-[#e06a10] text-white shadow-[0_4px_20px_rgba(245,130,32,0.4),0_0_0_1px_rgba(255,204,0,0.15),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_8px_30px_rgba(245,130,32,0.55),0_0_0_1px_rgba(255,204,0,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] hover:-translate-y-px cursor-pointer"
                       : "bg-white/10 text-white/30 cursor-not-allowed"
                     }
                   `}
@@ -342,7 +369,8 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
               {error && (
                 <p className="mt-4 text-center text-red-400 text-sm">{error}</p>
               )}
-            </div>
+              </div>{/* /inner panel */}
+            </div>{/* /oraculo-panel */}
           ) : (
             <OracleResultCard result={result} onReset={handleReset} />
           )}
@@ -390,7 +418,7 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
             )}
 
             {!isEmpty && (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
                 {filtered.map((entry) => (
                   <AnimalCard key={entry.id} entry={entry} />
                 ))}

@@ -236,9 +236,9 @@ export function PredictionsSection() {
                       viewport={{ once: true }}
                       transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
                       className={`h-full rounded-full ${
-                        prediction.confidence > 80 
-                          ? 'bg-gradient-to-r from-primary to-[#FF9933]' 
-                          : prediction.confidence > 65 
+                        prediction.confidence > 75
+                          ? 'bg-gradient-to-r from-[#009640] to-[#00C050]'
+                          : prediction.confidence > 55
                             ? 'bg-gradient-to-r from-accent to-[#D4A500]'
                             : 'bg-secondary'
                       }`}

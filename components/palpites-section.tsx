@@ -127,7 +127,7 @@ export async function PalpitesSection() {
       id="predicciones"
       className="relative py-20 md:py-28 overflow-hidden"
       style={{
-        background: "linear-gradient(180deg, #1E2B3E 0%, #243347 60%, #1E2B3E 100%)",
+        background: "linear-gradient(180deg, #2B2B2B 0%, #252525 60%, #2B2B2B 100%)",
       }}
     >
       {/* Glow blobs */}

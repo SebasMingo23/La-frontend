@@ -49,6 +49,17 @@
   --loteria-green-light:  #4DB85A;
   --loteria-gold:         #F0B429;
   --loteria-gold-dark:    #C8950A;
+
+  /* Alta Gama — paleta institucional */
+  --verde-fortuna:        #009640;
+  --dorado-premium:       #FFCC00;
+  --naranja-accion:       #F58220;
+
+  /* Sistema de capas de fondo */
+  --bg-base:    #2B2B2B;
+  --bg-elevated:#333333;
+  --bg-sunken:  #222222;
+  --bg-deep:    #1a1a1a;
 }
 
 .dark {
@@ -138,6 +149,11 @@
   --color-loteria-green-light:  var(--loteria-green-light);
   --color-loteria-gold:         var(--loteria-gold);
   --color-loteria-gold-dark:    var(--loteria-gold-dark);
+
+  /* Alta Gama utilities */
+  --color-verde-fortuna:        var(--verde-fortuna);
+  --color-dorado-premium:       var(--dorado-premium);
+  --color-naranja-accion:       var(--naranja-accion);
 }
 
 @layer base {
@@ -147,6 +163,53 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Oráculo — borde con gradiente animado rotativo
+   Wrapper externo del panel: padding 1px = espesor del borde
+   ──────────────────────────────────────────────────────────────── */
+.oraculo-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 204,  0, 0.65) 0%,
+    rgba(255, 204,  0, 0.05) 25%,
+    rgba(  0, 150, 64, 0.35) 50%,
+    rgba(255, 204,  0, 0.05) 75%,
+    rgba(245, 130, 32, 0.45) 100%
+  );
+  background-size: 300% 300%;
+  padding: 1px;
+  border-radius: 2rem;
+  animation: rotateBorder 4s linear infinite;
+}
+
+@keyframes rotateBorder {
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Separadores dorados entre secciones
+   ──────────────────────────────────────────────────────────────── */
+section#suenos,
+section#ganadores,
+section#predicciones,
+section#resultados {
+  position: relative;
+}
+section#suenos::after,
+section#ganadores::after,
+section#predicciones::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,204,0,0.12), transparent);
+  pointer-events: none;
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -231,7 +294,7 @@
   border-left: 4px solid #FF7A00;
   padding: 0.75rem 1.25rem;
   margin: 1.5rem 0;
-  background: #243347;
+  background: #2e2e2e;
   border-radius: 0 1rem 1rem 0;
   color: #CBD5E1;
   font-style: italic;
@@ -264,7 +327,7 @@
   transition: background 0.15s;
 }
 .wp-content tbody tr:nth-child(even) {
-  background: #243347;
+  background: #2e2e2e;
 }
 .wp-content tbody tr:hover {
   background: #2D3E54;

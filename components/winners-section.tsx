@@ -22,7 +22,7 @@ function GanadorCard({ ganador, delay }: { ganador: Ganador; delay: number }) {
       whileHover={{ y: -6, scale: 1.02 }}
       className="group"
     >
-      <Card className="bg-gradient-to-b from-[#1E2B3E] to-[#243347] border-none rounded-[2rem] p-6
+      <Card className="bg-gradient-to-b from-[#2e2e2e] to-[#252525] border-none rounded-[2rem] p-6
                        shadow-[0_25px_60px_rgba(0,0,0,0.5)] transition-all duration-300
                        hover:shadow-[0_35px_80px_rgba(0,0,0,0.65)]">
 
@@ -31,7 +31,7 @@ function GanadorCard({ ganador, delay }: { ganador: Ganador; delay: number }) {
           {/* Foto con badge anclado a la parte inferior del círculo */}
           <div className="relative">
             <div className="w-28 h-28 rounded-full overflow-hidden bg-primary/10
-                            ring-4 ring-primary/30 ring-offset-2 ring-offset-[#1E2B3E]"
+                            ring-4 ring-primary/30 ring-offset-2 ring-offset-[#2B2B2B]"
                  style={{ isolation: 'isolate' }}>
               {ganador.foto_url ? (
                 <img
@@ -75,7 +75,8 @@ function GanadorCard({ ganador, delay }: { ganador: Ganador; delay: number }) {
                            leading-tight mb-1">
               {ganador.nombre}
             </h3>
-            <div className="text-2xl font-bold text-primary font-[var(--font-gunterz)] mb-2">
+            <div className="text-2xl font-extrabold font-[var(--font-gunterz)] mb-2"
+                 style={{ color: '#009640', textShadow: '0 0 20px rgba(0,150,64,0.4)' }}>
               {ganador.premio}
             </div>
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
@@ -111,14 +112,10 @@ export function WinnersSection() {
   return (
     <section
       id="ganadores"
-      className="relative py-20 md:py-32 overflow-hidden"
-      style={{
-        backgroundImage: "url('/images/pattern-dice-orange.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      className="relative py-20 md:py-32 overflow-hidden bg-[#1e1e1e]"
     >
-      <div className="absolute inset-0 bg-[#FF7A00]/95" />
+      {/* Subtle top accent stripe */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#009640] to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -130,16 +127,16 @@ export function WinnersSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1E2B3E]/20
-                           text-[#1E2B3E] text-sm font-semibold uppercase tracking-wide mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10
+                           text-white border border-white/20 text-sm font-semibold uppercase tracking-wide mb-6">
             <Trophy size={16} />
             Últimos Ganadores
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1E2B3E] uppercase
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white uppercase
                          tracking-tighter mb-4 font-[var(--font-gunterz)]">
-            Ellos Ya <span className="text-white">Ganaron</span>
+            Ellos Ya <span className="text-[#009640]">Ganaron</span>
           </h2>
-          <p className="text-[#1E2B3E]/80 text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-white/70 text-lg md:text-xl max-w-2xl mx-auto">
             Conocé a los afortunados ganadores de esta semana
           </p>
         </motion.div>
@@ -153,13 +150,13 @@ export function WinnersSection() {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center gap-5 py-16 px-4 text-center"
           >
-            <div className="w-20 h-20 rounded-full bg-[#1E2B3E]/20 flex items-center justify-center">
-              <Trophy className="w-9 h-9 text-[#1E2B3E]/50" />
+            <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+              <Trophy className="w-9 h-9 text-white/40" />
             </div>
-            <h3 className="text-2xl font-bold text-[#1E2B3E] uppercase font-[var(--font-gunterz)]">
+            <h3 className="text-2xl font-bold text-white uppercase font-[var(--font-gunterz)]">
               ¡El podio está esperando!
             </h3>
-            <p className="text-[#1E2B3E]/70 text-lg max-w-md">
+            <p className="text-white/60 text-lg max-w-md">
               Aún no hay ganadores registrados. Jugá hoy y sé el primero en aparecer aquí.
             </p>
           </motion.div>
@@ -183,10 +180,10 @@ export function WinnersSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-12 text-center"
         >
-          <p className="text-[#1E2B3E]/70 text-lg mb-4">El próximo ganador podrías ser vos</p>
-          <button className="inline-flex items-center gap-2 px-8 py-4 bg-[#1E2B3E] text-foreground
+          <p className="text-white/60 text-lg mb-4">El próximo ganador podrías ser vos</p>
+          <button className="inline-flex items-center gap-2 px-8 py-4 min-h-[48px] bg-[#F58220] text-white
                              font-bold uppercase tracking-wide rounded-2xl
-                             shadow-[0_10px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.4)]
+                             shadow-[0_10px_40px_rgba(245,130,32,0.35)] hover:shadow-[0_15px_50px_rgba(245,130,32,0.5)]
                              transition-all cursor-pointer">
             <Trophy size={20} />
             Jugar Ahora

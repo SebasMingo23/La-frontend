@@ -208,7 +208,7 @@ export function Header() {
             </div>
 
             <button
-              className="p-2 text-foreground"
+              className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -225,7 +225,7 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#1E2B3E]/95 backdrop-blur-md border-b border-border"
+            className="md:hidden bg-[#2B2B2B]/95 backdrop-blur-md border-b border-border"
           >
             <nav className="flex flex-col px-4 py-4 gap-1">
               {/* Links principales */}
