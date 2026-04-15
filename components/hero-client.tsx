@@ -52,6 +52,17 @@ export function HeroClient({ resultado }: HeroClientProps) {
         }}
       />
 
+      {/* Textura de billetes — marca de agua de seguridad bancaria */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/images/pattern-money-bills.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "260px",
+          opacity: 0.045,
+        }}
+      />
+
       {/* Parallax Decorative Graphics */}
       <motion.div
         style={{ y: parallaxY1 }}
@@ -201,14 +212,19 @@ export function HeroClient({ resultado }: HeroClientProps) {
         >
           <Button
             size="lg"
-            className="bg-[#F58220] hover:bg-[#E06B10] text-white font-bold uppercase tracking-wide text-lg px-8 min-h-[48px] w-full sm:w-auto rounded-[1.5rem] shadow-[0_10px_40px_rgba(245,130,32,0.4)] hover:shadow-[0_15px_50px_rgba(245,130,32,0.6)] transition-all"
+            onClick={() =>
+              document
+                .querySelector("#puntos-de-venta")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" })
+            }
+            className="bg-[#F58220] hover:bg-[#E06B10] text-white font-bold uppercase tracking-wide text-lg px-8 min-h-[48px] w-full sm:w-auto rounded-[1.5rem] shadow-[0_10px_40px_rgba(245,130,32,0.4)] hover:shadow-[0_15px_50px_rgba(245,130,32,0.6)] transition-all cursor-pointer"
           >
             Jugar Ahora
           </Button>
           <Button
             size="lg"
             variant="outline"
-            className="border border-[#009640]/50 text-[#009640] bg-[#009640]/[0.08] font-bold uppercase tracking-wide text-lg px-8 min-h-[48px] w-full sm:w-auto rounded-[1.5rem] backdrop-blur-sm transition-all duration-300 shadow-[0_0_15px_rgba(0,150,64,0.15)] hover:shadow-[0_0_25px_rgba(0,150,64,0.4)] hover:border-[#009640]/80 hover:bg-[#009640]/[0.12]"
+            className="border border-[#009640]/50 text-[#009640] bg-[#009640]/[0.08] font-bold uppercase tracking-wide text-lg px-8 min-h-[48px] w-full sm:w-auto rounded-[1.5rem] backdrop-blur-sm transition-all duration-300 shadow-[0_0_15px_rgba(0,150,64,0.15)] hover:bg-[#009640] hover:text-white hover:border-[#009640] hover:shadow-[0_0_20px_rgba(0,150,64,0.5)]"
           >
             <Play size={20} className="mr-2" />
             Sorteo en Vivo

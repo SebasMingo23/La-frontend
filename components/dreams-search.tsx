@@ -363,6 +363,17 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
 
   return (
     <section id="suenos" className="relative py-20 md:py-28 bg-[#222222] overflow-hidden">
+      {/* Textura de billetes — marca de agua de seguridad bancaria */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/images/pattern-money-bills.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "260px",
+          opacity: 0.04,
+        }}
+      />
+
       {/* Background blobs */}
       <div className="absolute top-10 right-10 w-72 h-72 bg-[#FFCC00]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#009640]/5 rounded-full blur-3xl pointer-events-none" />
