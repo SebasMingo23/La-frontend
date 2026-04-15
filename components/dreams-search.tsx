@@ -369,8 +369,8 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
         style={{
           backgroundImage: "url('/images/pattern-money-bills.png')",
           backgroundRepeat: "repeat",
-          backgroundSize: "260px",
-          opacity: 0.04,
+          backgroundSize: "700px",
+          opacity: 0.035,
         }}
       />
 
