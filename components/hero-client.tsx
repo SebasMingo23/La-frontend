@@ -52,17 +52,6 @@ export function HeroClient({ resultado }: HeroClientProps) {
         }}
       />
 
-      {/* Textura de billetes — marca de agua de seguridad bancaria */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: "url('/images/pattern-money-bills.png')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "260px",
-          opacity: 0.045,
-        }}
-      />
-
       {/* Parallax Decorative Graphics */}
       <motion.div
         style={{ y: parallaxY1 }}
