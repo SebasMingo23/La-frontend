@@ -369,8 +369,8 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
               {error && (
                 <p className="mt-4 text-center text-red-400 text-sm">{error}</p>
               )}
-              </div>{/* /inner panel */}
-            </div>{/* /oraculo-panel */}
+              </div>
+            </div>
           ) : (
             <OracleResultCard result={result} onReset={handleReset} />
           )}
