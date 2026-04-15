@@ -1,84 +1,113 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Trophy, Star, MapPin } from "lucide-react"
+import { Trophy, Star, MapPin, User } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import Image from "next/image"
+import type { Ganador } from "@/lib/types"
 
-// Recent winners from Paraguay
-const winners = [
-  {
-    id: 1,
-    name: "María González",
-    city: "Asunción",
-    prize: "Gs. 15.000.000",
-    date: "10 Abr 2026",
-    animal: "León",
-    animalImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/leon-iconos-animales-dorado-rtFAoATDdjADvxCDRWFjaaVDIZuo1B.png",
-  },
-  {
-    id: 2,
-    name: "Carlos Benítez",
-    city: "San Lorenzo",
-    prize: "Gs. 8.500.000",
-    date: "9 Abr 2026",
-    animal: "Águila",
-    animalImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/aguila-iconos-animales-dorado-mgEeRjVjqAfNssbgtMvXF62KblBja3.png",
-  },
-  {
-    id: 3,
-    name: "Ana Martínez",
-    city: "Luque",
-    prize: "Gs. 12.000.000",
-    date: "9 Abr 2026",
-    animal: "Toro",
-    animalImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/toro-iconos-animales-dorado-F6AG6syUIVMYCzWrBTXegKTqiFJRBX.png",
-  },
-  {
-    id: 4,
-    name: "Roberto Pérez",
-    city: "Fernando de la Mora",
-    prize: "Gs. 5.000.000",
-    date: "8 Abr 2026",
-    animal: "Oveja",
-    animalImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/oveja-iconos-animales-dorado-fudDVXABPIib8F7kRmiCyGTmQCcvlo.png",
-  },
-  {
-    id: 5,
-    name: "Laura Giménez",
-    city: "Lambaré",
-    prize: "Gs. 20.000.000",
-    date: "8 Abr 2026",
-    animal: "Perro",
-    animalImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/perro-iconos-animales-dorado-VMfjsip9MmXlWNRCcS8AHy5RCjGVVV.png",
-  },
-  {
-    id: 6,
-    name: "Jorge Villalba",
-    city: "Asunción",
-    prize: "Gs. 7.500.000",
-    date: "7 Abr 2026",
-    animal: "Caballo",
-    animalImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/caballo-iconos-animales-dorado-ho4lnH4LyGVAB1dCtP6knDV2RTbbqL.png",
-  },
-]
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
+function formatFecha(fechaStr: string): string {
+  if (!fechaStr) return ""
+  const [year, month, day] = fechaStr.split("-")
+  const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+  return `${parseInt(day, 10)} ${meses[parseInt(month, 10) - 1]} ${year}`
 }
 
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0 }
+function GanadorCard({ ganador, delay }: { ganador: Ganador; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      whileHover={{ y: -6, scale: 1.02 }}
+      className="group"
+    >
+      <Card className="bg-gradient-to-b from-[#1E2B3E] to-[#243347] border-none rounded-[2rem] p-6
+                       shadow-[0_25px_60px_rgba(0,0,0,0.5)] transition-all duration-300
+                       hover:shadow-[0_35px_80px_rgba(0,0,0,0.65)]">
+
+        <div className="flex flex-col items-center gap-4">
+
+          {/* Foto con badge anclado a la parte inferior del círculo */}
+          <div className="relative">
+            <div className="w-28 h-28 rounded-full overflow-hidden bg-primary/10
+                            ring-4 ring-primary/30 ring-offset-2 ring-offset-[#1E2B3E]"
+                 style={{ isolation: 'isolate' }}>
+              {ganador.foto_url ? (
+                <img
+                  src={ganador.foto_url}
+                  alt={ganador.nombre}
+                  width={112}
+                  height={112}
+                  sizes="112px"
+                  className="w-full h-full object-cover block"
+                  style={{
+                    imageRendering: '-webkit-optimize-contrast',
+                    filter: 'blur(0px)',
+                    willChange: 'transform',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'translateZ(0)',
+                  } as React.CSSProperties}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <User className="w-10 h-10 text-primary/40" />
+                </div>
+              )}
+            </div>
+
+            {/* Badge anclado al borde inferior de la foto — solo si gran premio */}
+            {ganador.is_grand_prize === 1 && (
+              <span className="absolute -bottom-3 left-1/2 -translate-x-1/2
+                               inline-flex items-center gap-1 px-3 py-1
+                               bg-accent text-accent-foreground text-[10px] font-bold
+                               uppercase rounded-full whitespace-nowrap
+                               shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
+                <Star size={10} fill="currentColor" />
+                Gran Premio
+              </span>
+            )}
+          </div>
+
+          {/* Info centrada — margen extra si hay badge para no pisarlo */}
+          <div className={`text-center w-full ${ganador.is_grand_prize === 1 ? 'mt-3' : 'mt-0'}`}>
+            <h3 className="text-lg font-bold text-foreground font-[var(--font-gunterz)] uppercase
+                           leading-tight mb-1">
+              {ganador.nombre}
+            </h3>
+            <div className="text-2xl font-bold text-primary font-[var(--font-gunterz)] mb-2">
+              {ganador.premio}
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <MapPin size={11} className="text-primary/70 flex-shrink-0" />
+                {ganador.ciudad}
+              </span>
+              <span className="text-muted-foreground/30">·</span>
+              <span>{formatFecha(ganador.fecha)}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  )
 }
 
 export function WinnersSection() {
+  const [ganadores, setGanadores] = useState<Ganador[]>([])
+
+  useEffect(() => {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/ganadores?limit=6`
+    fetch(url)
+      .then((r) => r.json())
+      .then((data: unknown) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setGanadores(data as Ganador[])
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <section
       id="ganadores"
@@ -89,11 +118,11 @@ export function WinnersSection() {
         backgroundPosition: "center",
       }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-[#FF7A00]/95" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -101,99 +130,69 @@ export function WinnersSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1E2B3E]/20 text-[#1E2B3E] text-sm font-semibold uppercase tracking-wide mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1E2B3E]/20
+                           text-[#1E2B3E] text-sm font-semibold uppercase tracking-wide mb-6">
             <Trophy size={16} />
             Últimos Ganadores
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1E2B3E] uppercase tracking-tighter mb-4 font-[var(--font-oswald)]">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1E2B3E] uppercase
+                         tracking-tighter mb-4 font-[var(--font-gunterz)]">
             Ellos Ya <span className="text-white">Ganaron</span>
           </h2>
           <p className="text-[#1E2B3E]/80 text-lg md:text-xl max-w-2xl mx-auto">
-            Conoce a los afortunados ganadores de esta semana
+            Conocé a los afortunados ganadores de esta semana
           </p>
         </motion.div>
 
-        {/* Winners Grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {winners.map((winner, index) => (
-            <motion.div
-              key={winner.id}
-              variants={item}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group"
-            >
-              <Card className="relative overflow-hidden bg-[#1E2B3E] border-none rounded-[2rem] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.4)] transition-all duration-300 hover:shadow-[0_30px_80px_rgba(0,0,0,0.5)]">
-                {/* Featured Badge for first winner */}
-                {index === 0 && (
-                  <div className="absolute top-0 right-0 px-4 py-2 bg-accent text-accent-foreground text-xs font-bold uppercase rounded-bl-2xl flex items-center gap-1">
-                    <Star size={12} fill="currentColor" />
-                    Gran Premio
-                  </div>
-                )}
-
-                <div className="flex items-center gap-4">
-                  {/* Animal Icon */}
-                  <div className="relative w-20 h-20 flex-shrink-0">
-                    <div className="absolute inset-0 bg-primary/20 rounded-2xl" />
-                    <Image
-                      src={winner.animalImage}
-                      alt={winner.animal}
-                      fill
-                      className="object-contain p-2 drop-shadow-[0_0_10px_rgba(245,181,0,0.3)]"
-                    />
-                  </div>
-
-                  {/* Winner Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-bold text-foreground truncate font-[var(--font-oswald)] uppercase">
-                      {winner.name}
-                    </h3>
-                    <div className="flex items-center gap-1 text-muted-foreground text-sm mb-2">
-                      <MapPin size={12} className="text-primary" />
-                      {winner.city}
-                    </div>
-                    <div className="text-2xl font-bold text-primary font-[var(--font-oswald)]">
-                      {winner.prize}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="mt-4 pt-4 border-t border-border/30 flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground uppercase tracking-wide">
-                    {winner.animal}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {winner.date}
-                  </span>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Grid o Empty State */}
+        {ganadores.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-5 py-16 px-4 text-center"
+          >
+            <div className="w-20 h-20 rounded-full bg-[#1E2B3E]/20 flex items-center justify-center">
+              <Trophy className="w-9 h-9 text-[#1E2B3E]/50" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#1E2B3E] uppercase font-[var(--font-gunterz)]">
+              ¡El podio está esperando!
+            </h3>
+            <p className="text-[#1E2B3E]/70 text-lg max-w-md">
+              Aún no hay ganadores registrados. Jugá hoy y sé el primero en aparecer aquí.
+            </p>
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ganadores.map((ganador, index) => (
+              <GanadorCard
+                key={ganador.id}
+                ganador={ganador}
+                delay={index * 0.08}
+              />
+            ))}
+          </div>
+        )}
 
         {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-12 text-center"
         >
-          <p className="text-[#1E2B3E]/70 text-lg mb-4">
-            El próximo ganador podrías ser tú
-          </p>
-          <button className="inline-flex items-center gap-2 px-8 py-4 bg-[#1E2B3E] text-foreground font-bold uppercase tracking-wide rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.4)] transition-all">
+          <p className="text-[#1E2B3E]/70 text-lg mb-4">El próximo ganador podrías ser vos</p>
+          <button className="inline-flex items-center gap-2 px-8 py-4 bg-[#1E2B3E] text-foreground
+                             font-bold uppercase tracking-wide rounded-2xl
+                             shadow-[0_10px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.4)]
+                             transition-all cursor-pointer">
             <Trophy size={20} />
             Jugar Ahora
           </button>
         </motion.div>
+
       </div>
     </section>
   )

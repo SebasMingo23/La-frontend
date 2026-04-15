@@ -1,0 +1,242 @@
+# ══════════════════════════════════════════════════════════════════
+#  Lotería de Animales — Stack completo
+#  Servicios: traefik · db (MariaDB) · backend (WordPress) · frontend (Next.js)
+#
+#  Redes:
+#    web-network  → red externa de Traefik (ya existe en el VPS)
+#    loteria-net  → red privada interna (db ↔ backend ↔ frontend)
+#
+#  Secrets requeridos en .env (NO commitear):
+#    MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD, MYSQL_USER, MYSQL_DATABASE
+#    NEXT_PUBLIC_API_URL, ACME_EMAIL
+# ══════════════════════════════════════════════════════════════════
+
+services:
+
+  # ──────────────────────────────────────────────────────────────
+  #  TRAEFIK v3 — Proxy Inverso + SSL automático (Let's Encrypt)
+  #  Único servicio con puertos expuestos al host (80 y 443).
+  #  El dashboard está desactivado al exterior — usar túnel SSH.
+  # ──────────────────────────────────────────────────────────────
+  traefik:
+    image: traefik:v3.1
+    restart: unless-stopped
+    ports:
+      - "80:80"       # HTTP  — necesario para el challenge ACME y redirect
+      - "443:443"     # HTTPS — tráfico SSL terminado aquí
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=web-network"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # ── Let's Encrypt (HTTP-01 challenge) ──────────────────────
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      # ── Logs ────────────────────────────────────────────────────
+      - "--log.level=INFO"
+      - "--accesslog=true"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "letsencrypt_data:/letsencrypt"
+    networks:
+      - web-network
+
+
+  # ──────────────────────────────────────────────────────────────
+  #  BASE DE DATOS — MariaDB 10.11
+  #  Solo accesible desde la red interna. Nunca expuesta al exterior.
+  # ──────────────────────────────────────────────────────────────
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER:          ${MYSQL_USER:-wpuser}
+      MYSQL_PASSWORD:      ${MYSQL_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - loteria-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 20s
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+
+  # ──────────────────────────────────────────────────────────────
+  #  BACKEND — WordPress PHP 8.2 + Apache
+  #  Accede a db por red interna. Nunca expone puerto al host.
+  #
+  #  STAGING activo:  api.187.77.251.126.nip.io
+  #  PRODUCCIÓN:      api.loteriadeanimales.com.py
+  #    → Descomentar bloque PRODUCCIÓN cuando el DNS esté apuntado.
+  # ──────────────────────────────────────────────────────────────
+  backend:
+    image: wordpress:php8.2-apache
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST:     db:3306
+      WORDPRESS_DB_NAME:     ${MYSQL_DATABASE:-wordpress}
+      WORDPRESS_DB_USER:     ${MYSQL_USER:-wpuser}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: wp_
+      # WP_HOME_URL viene del .env — staging vs producción sin tocar este archivo.
+      WORDPRESS_CONFIG_EXTRA: >-
+        define('WP_HOME',    '${WP_HOME_URL}');
+        define('WP_SITEURL', '${WP_HOME_URL}');
+        define('FORCE_SSL_ADMIN', true);
+        if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+          $$_SERVER['HTTPS'] = 'on';
+        }
+    volumes:
+      - wp_content:/var/www/html/wp-content
+    expose:
+      - "80"
+    networks:
+      - web-network
+      - loteria-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web-network"
+      - "traefik.http.services.backend-svc.loadbalancer.server.port=80"
+
+      # ── Middleware CORS — inyecta headers en respuestas del backend ─
+      # Necesario para Client Components que hacen fetch desde el browser.
+      # Traefik agrega estos headers a todas las respuestas del backend,
+      # sin tocar WordPress ni requerir rebuild del frontend.
+      - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Origin=https://staging.187.77.251.126.nip.io"
+      - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Methods=GET, POST, OPTIONS"
+      - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Headers=Content-Type, Authorization, X-WP-Nonce"
+
+      # ════════════════════════════════════════════════════════════
+      #  STAGING — api.187.77.251.126.nip.io
+      #  Activo ahora. Eliminar cuando producción esté lista.
+      # ════════════════════════════════════════════════════════════
+      - "traefik.http.routers.backend-staging-http.rule=Host(`api.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.backend-staging-http.entrypoints=web"
+      - "traefik.http.routers.backend-staging-http.middlewares=redirect-to-https@docker"
+
+      - "traefik.http.routers.backend-staging-https.rule=Host(`api.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.backend-staging-https.entrypoints=websecure"
+      - "traefik.http.routers.backend-staging-https.tls=true"
+      - "traefik.http.routers.backend-staging-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend-staging-https.service=backend-svc"
+      - "traefik.http.routers.backend-staging-https.middlewares=cors-api"
+
+      # ════════════════════════════════════════════════════════════
+      #  PRODUCCIÓN — api.loteriadeanimales.com.py
+      #  Descomentar cuando el DNS esté apuntado a este VPS.
+      #  Actualizar también el Access-Control-Allow-Origin del middleware.
+      # ════════════════════════════════════════════════════════════
+      # - "traefik.http.routers.backend-http.rule=Host(`api.loteriadeanimales.com.py`)"
+      # - "traefik.http.routers.backend-http.entrypoints=web"
+      # - "traefik.http.routers.backend-http.middlewares=redirect-to-https@docker"
+      #
+      # - "traefik.http.routers.backend-https.rule=Host(`api.loteriadeanimales.com.py`)"
+      # - "traefik.http.routers.backend-https.entrypoints=websecure"
+      # - "traefik.http.routers.backend-https.tls=true"
+      # - "traefik.http.routers.backend-https.tls.certresolver=letsencrypt"
+      # - "traefik.http.routers.backend-https.service=backend-svc"
+      # - "traefik.http.routers.backend-https.middlewares=cors-api"
+
+
+  # ──────────────────────────────────────────────────────────────
+  #  FRONTEND — Next.js 15 (output: standalone)
+  #  En loteria-net para poder llamar al backend internamente.
+  #
+  #  STAGING activo:  staging.187.77.251.126.nip.io
+  #  PRODUCCIÓN:      loteriadeanimales.com.py
+  #    → Descomentar bloque PRODUCCIÓN cuando el DNS esté apuntado.
+  # ──────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    image: loteria-frontend:latest
+    restart: unless-stopped
+    depends_on:
+      - backend
+    env_file:
+      - .env.production
+    expose:
+      - "3000"
+    networks:
+      - web-network
+      - loteria-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web-network"
+      - "traefik.http.services.frontend-svc.loadbalancer.server.port=3000"
+
+      # ── Middleware global: HTTP → HTTPS (compartido con backend) ─
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+
+      # ════════════════════════════════════════════════════════════
+      #  STAGING — staging.187.77.251.126.nip.io
+      #  Activo ahora. Eliminar cuando producción esté lista.
+      # ════════════════════════════════════════════════════════════
+      - "traefik.http.routers.frontend-staging-http.rule=Host(`staging.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.frontend-staging-http.entrypoints=web"
+      - "traefik.http.routers.frontend-staging-http.middlewares=redirect-to-https"
+
+      - "traefik.http.routers.frontend-staging-https.rule=Host(`staging.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.frontend-staging-https.entrypoints=websecure"
+      - "traefik.http.routers.frontend-staging-https.tls=true"
+      - "traefik.http.routers.frontend-staging-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend-staging-https.service=frontend-svc"
+
+      # ════════════════════════════════════════════════════════════
+      #  PRODUCCIÓN — loteriadeanimales.com.py
+      #  Descomentar cuando el DNS esté apuntado a este VPS.
+      # ════════════════════════════════════════════════════════════
+      # - "traefik.http.routers.frontend-http.rule=Host(`loteriadeanimales.com.py`) || Host(`www.loteriadeanimales.com.py`)"
+      # - "traefik.http.routers.frontend-http.entrypoints=web"
+      # - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
+      #
+      # - "traefik.http.routers.frontend-https.rule=Host(`loteriadeanimales.com.py`) || Host(`www.loteriadeanimales.com.py`)"
+      # - "traefik.http.routers.frontend-https.entrypoints=websecure"
+      # - "traefik.http.routers.frontend-https.tls=true"
+      # - "traefik.http.routers.frontend-https.tls.certresolver=letsencrypt"
+      # - "traefik.http.routers.frontend-https.service=frontend-svc"
+      # - "traefik.http.routers.frontend-https.tls.domains[0].main=loteriadeanimales.com.py"
+      # - "traefik.http.routers.frontend-https.tls.domains[0].sans=www.loteriadeanimales.com.py"
+
+
+# ══════════════════════════════════════════════════════════════════
+#  REDES
+# ══════════════════════════════════════════════════════════════════
+networks:
+  web-network:
+    external: true      # red de Traefik, ya existe en el VPS
+
+  loteria-net:
+    driver: bridge
+    internal: true      # sin salida a internet — solo comunicación entre servicios
+
+
+# ══════════════════════════════════════════════════════════════════
+#  VOLÚMENES
+# ══════════════════════════════════════════════════════════════════
+volumes:
+  mariadb_data:
+    driver: local       # datos de MariaDB — nunca borrar en producción
+
+  wp_content:
+    driver: local       # plugins, themes, uploads
+
+  letsencrypt_data:
+    driver: local       # certificados SSL — nunca borrar

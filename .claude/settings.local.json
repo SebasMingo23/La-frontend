@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(ls C:/Users/chiar/Proyecto-Loteria/la-frontend/tailwind.config*)",
+      "Bash(ls C:/Users/chiar/Proyecto-Loteria/la-frontend/postcss.config*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

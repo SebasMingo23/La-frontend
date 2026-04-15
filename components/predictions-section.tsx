@@ -7,57 +7,57 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { useRef } from "react"
 
-// 5 daily predictions with golden animal icons
+// 5 daily predictions with golden animal icons (local assets)
 const predictions = [
-  { 
-    animal: "León", 
-    number: "16", 
+  {
+    animal: "León",
+    number: "16",
     milesima: "3716",
     cento: "716",
     docena: "16",
-    confidence: 89, 
+    confidence: 89,
     trend: "hot",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/leon-iconos-animales-dorado-rtFAoATDdjADvxCDRWFjaaVDIZuo1B.png"
+    image: "/images/animales/leon-iconos-animales-dorado.png",
   },
-  { 
-    animal: "Cobra", 
-    number: "09", 
+  {
+    animal: "Cobra",
+    number: "09",
     milesima: "1809",
     cento: "809",
     docena: "09",
-    confidence: 76, 
+    confidence: 76,
     trend: "rising",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cobra-iconos-animales-dorado-6QuyGSg8AXHAJ7jX2Ulh1BtAcydkwI.png"
+    image: "/images/animales/cobra-iconos-animales-dorado.png",
   },
-  { 
-    animal: "Águila", 
-    number: "02", 
+  {
+    animal: "Águila",
+    number: "02",
     milesima: "4502",
     cento: "502",
     docena: "02",
-    confidence: 72, 
+    confidence: 72,
     trend: "stable",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/aguila-iconos-animales-dorado-mgEeRjVjqAfNssbgtMvXF62KblBja3.png"
+    image: "/images/animales/aguila-iconos-animales-dorado.png",
   },
-  { 
-    animal: "Toro", 
-    number: "21", 
+  {
+    animal: "Toro",
+    number: "21",
     milesima: "2721",
     cento: "721",
     docena: "21",
-    confidence: 68, 
+    confidence: 68,
     trend: "rising",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/toro-iconos-animales-dorado-F6AG6syUIVMYCzWrBTXegKTqiFJRBX.png"
+    image: "/images/animales/toro-iconos-animales-dorado.png",
   },
-  { 
-    animal: "Mariposa", 
-    number: "04", 
+  {
+    animal: "Mariposa",
+    number: "04",
     milesima: "9204",
     cento: "204",
     docena: "04",
-    confidence: 65, 
+    confidence: 65,
     trend: "hot",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mariposa-iconos-animales-dorado-aAt84RVDDEkohHW0uhrBOmm5VqkLN3.png"
+    image: "/images/animales/mariposa-iconos-animales-dorado.png",
   },
 ]
 
@@ -90,10 +90,7 @@ export function PredictionsSection() {
     <section
       ref={sectionRef}
       id="predicciones"
-      className="relative py-20 md:py-32 overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, #BDD96C 0%, #9BC34A 100%)",
-      }}
+      className="relative py-20 md:py-32 overflow-hidden bg-transparent"
     >
       {/* Decorative Top Bar */}
       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-primary" />
@@ -132,14 +129,14 @@ export function PredictionsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1E2B3E]/10 text-[#1E2B3E] text-sm font-semibold uppercase tracking-wide mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white border border-white/20 text-sm font-semibold uppercase tracking-wide mb-6">
             <Brain size={16} />
             Inteligencia Artificial
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1E2B3E] uppercase tracking-tighter mb-4 font-[var(--font-oswald)]">
-            Palpites del <span className="text-primary">Día</span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-md uppercase tracking-tighter mb-4 font-[var(--font-gunterz)]">
+            Palpites del <span className="text-loteria-yellow">Día</span>
           </h2>
-          <p className="text-[#1E2B3E]/70 text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-white/75 text-lg md:text-xl max-w-2xl mx-auto">
             5 predicciones diarias generadas por IA basadas en análisis de patrones históricos
           </p>
         </motion.div>
@@ -160,11 +157,13 @@ export function PredictionsSection() {
               className={`group ${index === 0 ? 'lg:col-span-1 lg:row-span-2' : ''}`}
             >
               <Card className={`
-                relative overflow-hidden bg-[#1E2B3E] border-none rounded-[2.5rem] 
+                relative overflow-hidden bg-loteria-dark-card/90 backdrop-blur-md
+                border border-loteria-yellow/20 hover:border-loteria-yellow/50
+                rounded-[2.5rem]
                 ${index === 0 ? 'p-8 md:p-10' : 'p-6 md:p-8'}
-                shadow-[0_20px_60px_rgba(0,0,0,0.4)]
+                shadow-[0_20px_60px_rgba(0,0,0,0.5)]
                 transition-all duration-300
-                hover:shadow-[0_30px_80px_rgba(0,0,0,0.5)]
+                hover:shadow-[0_30px_80px_rgba(0,0,0,0.6)]
               `}>
                 {/* Confidence Badge */}
                 <Badge
@@ -198,7 +197,7 @@ export function PredictionsSection() {
                     />
                   </motion.div>
 
-                  <h3 className={`font-bold text-foreground uppercase tracking-tight mb-3 font-[var(--font-oswald)] ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
+                  <h3 className={`font-bold text-foreground uppercase tracking-tight mb-3 font-[var(--font-gunterz)] ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
                     {prediction.animal}
                   </h3>
 
@@ -262,9 +261,9 @@ export function PredictionsSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1E2B3E]/10 backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-[#1E2B3E]" />
-            <p className="text-[#1E2B3E]/70 text-sm">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+            <Sparkles className="w-4 h-4 text-white/70" />
+            <p className="text-white/70 text-sm">
               Predicciones generadas automáticamente y aprobadas por el administrador
             </p>
           </div>
