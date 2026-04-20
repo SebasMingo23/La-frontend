@@ -52,19 +52,19 @@ export function ListaLocales({ locales, selectedId, onSelectLocal, searchText, s
   return (
     <div ref={listRef} className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-border">
       {/* Contador */}
-      <p className="text-xs text-muted-foreground px-1 pb-1">
+      <p className="text-xs text-white/50 px-1 pb-1">
         {filtered.length} agencia{filtered.length !== 1 ? "s" : ""}
         {searchText ? ` para "${searchText}"` : ""}
       </p>
 
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
-          <MapPin className="w-10 h-10 text-border" />
-          <p className="text-muted-foreground text-sm">
+          <MapPin className="w-10 h-10 text-white/20" />
+          <p className="text-white/50 text-sm">
             No se encontraron agencias
           </p>
           {statusFilter !== "todos" && (
-            <p className="text-xs text-muted-foreground/70">
+            <p className="text-xs text-white/30">
               Probá cambiando el filtro de estado
             </p>
           )}
@@ -83,7 +83,7 @@ export function ListaLocales({ locales, selectedId, onSelectLocal, searchText, s
               group p-4 rounded-2xl cursor-pointer transition-all duration-200 border
               ${isSelected
                 ? "bg-primary/15 border-primary/50 shadow-[0_0_20px_rgba(255,122,0,0.12)]"
-                : "bg-background/30 border-border hover:border-primary/30 hover:bg-background/50"
+                : "bg-white/5 border-white/12 hover:border-primary/30 hover:bg-white/8"
               }
             `}
           >
@@ -93,7 +93,7 @@ export function ListaLocales({ locales, selectedId, onSelectLocal, searchText, s
               {local.foto_url ? (
                 <div className={`
                   flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden border-2 transition-colors
-                  ${isSelected ? "border-primary" : "border-border group-hover:border-primary/40"}
+                  ${isSelected ? "border-primary" : "border-white/20 group-hover:border-primary/40"}
                 `}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -115,22 +115,22 @@ export function ListaLocales({ locales, selectedId, onSelectLocal, searchText, s
               <div className="flex-1 min-w-0">
                 <p className={`
                   font-semibold text-sm truncate transition-colors
-                  ${isSelected ? "text-primary" : "text-foreground group-hover:text-primary"}
+                  ${isSelected ? "text-primary" : "text-white group-hover:text-primary"}
                 `}>
                   {local.nombre}
                 </p>
                 {local.direccion ? (
-                  <p className="text-xs text-muted-foreground truncate mt-0.5">{local.direccion}</p>
+                  <p className="text-xs text-white/50 truncate mt-0.5">{local.direccion}</p>
                 ) : (
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${abierto ? "bg-green-400" : "bg-red-400"}`} />
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-white/50">
                       {abierto ? "Abierto" : "Cerrado"} · Lun–Sáb {HORA_APERTURA}:00–{HORA_CIERRE}:00
                     </span>
                   </div>
                 )}
                 {local.telefono && (
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                  <span className="flex items-center gap-1 text-xs text-white/50 mt-0.5">
                     <Phone className="w-3 h-3 text-primary flex-shrink-0" />
                     {local.telefono}
                   </span>
@@ -142,7 +142,7 @@ export function ListaLocales({ locales, selectedId, onSelectLocal, searchText, s
                 w-4 h-4 flex-shrink-0 transition-all
                 ${isSelected
                   ? "text-primary translate-x-0.5"
-                  : "text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5"
+                  : "text-white/30 group-hover:text-primary group-hover:translate-x-0.5"
                 }
               `} />
             </div>

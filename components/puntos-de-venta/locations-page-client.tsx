@@ -67,12 +67,12 @@ export function LocationsPageClient({ locales }: Props) {
 
   return (
     <main
-      className="pt-16 md:pt-20 flex flex-col bg-background overflow-hidden"
+      className="pt-16 md:pt-20 flex flex-col bg-[#4A3123] overflow-hidden"
       style={{ height: "100dvh" }}
     >
 
       {/* ── Barra superior: búsqueda + filtros ───────────────────── */}
-      <div className="flex-shrink-0 bg-card border-b border-border px-4 py-3 flex items-center gap-3">
+      <div className="flex-shrink-0 bg-[#3a2419] border-b border-white/15 px-4 py-3 flex items-center gap-3">
 
         {/* Buscador */}
         <div className="relative flex-1 max-w-sm">
@@ -82,12 +82,12 @@ export function LocationsPageClient({ locales }: Props) {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Buscar agencia o barrio..."
-            className="w-full pl-9 pr-8 py-2 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary transition"
+            className="w-full pl-9 pr-8 py-2 bg-[#4A3123] border border-white/20 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary transition"
           />
           {searchText && (
             <button
               onClick={() => setSearchText("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition"
               aria-label="Limpiar búsqueda"
             >
               <X className="w-3.5 h-3.5" />
@@ -104,7 +104,7 @@ export function LocationsPageClient({ locales }: Props) {
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                 statusFilter === f
                   ? "bg-primary text-white"
-                  : "bg-background border border-border text-muted-foreground hover:border-primary/40"
+                  : "bg-[#4A3123] border border-white/20 text-white/60 hover:border-primary/40"
               }`}
             >
               {f === "abierto" && "🟢 "}{f === "cerrado" && "🔴 "}{STATUS_LABELS[f]}
@@ -114,7 +114,7 @@ export function LocationsPageClient({ locales }: Props) {
 
         {/* Filtro móvil */}
         <button
-          className="sm:hidden p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground transition"
+          className="sm:hidden p-2 rounded-lg border border-white/20 text-white/60 hover:text-white transition"
           onClick={() => setFiltersOpen((v) => !v)}
           aria-label="Filtros"
         >
@@ -122,14 +122,14 @@ export function LocationsPageClient({ locales }: Props) {
         </button>
 
         {/* Contador */}
-        <span className="hidden lg:block text-xs text-muted-foreground flex-shrink-0">
+        <span className="hidden lg:block text-xs text-white/50 flex-shrink-0">
           {locales.length} agencias
         </span>
       </div>
 
       {/* Filtros móvil expandibles */}
       {filtersOpen && (
-        <div className="sm:hidden flex-shrink-0 px-4 py-2 bg-card border-b border-border flex gap-2">
+        <div className="sm:hidden flex-shrink-0 px-4 py-2 bg-[#3a2419] border-b border-white/15 flex gap-2">
           {(Object.keys(STATUS_LABELS) as StatusFilter[]).map((f) => (
             <button
               key={f}
@@ -137,7 +137,7 @@ export function LocationsPageClient({ locales }: Props) {
               className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-colors ${
                 statusFilter === f
                   ? "bg-primary text-white"
-                  : "bg-background border border-border text-muted-foreground"
+                  : "bg-[#4A3123] border border-white/20 text-white/60"
               }`}
             >
               {STATUS_LABELS[f]}
@@ -160,14 +160,14 @@ export function LocationsPageClient({ locales }: Props) {
           {/* Chip de local seleccionado — visible sobre el mapa en móvil */}
           {selectedLocal && (
             <div className="absolute bottom-4 left-4 right-4 md:hidden z-[1000]">
-              <div className="bg-card/95 backdrop-blur-sm border border-primary/40 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-xl">
+              <div className="bg-[#3a2419]/95 backdrop-blur-sm border border-primary/40 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-xl">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
-                <p className="text-sm font-semibold text-foreground flex-1 truncate">
+                <p className="text-sm font-semibold text-white flex-1 truncate">
                   {selectedLocal.nombre}
                 </p>
                 <button
                   onClick={() => setSelectedId(null)}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-white/40 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -177,14 +177,14 @@ export function LocationsPageClient({ locales }: Props) {
         </div>
 
         {/* LISTA — sidebar en desktop, panel inferior en móvil */}
-        <div className="md:w-96 lg:w-[420px] flex flex-col overflow-hidden border-t md:border-t-0 md:border-l border-border bg-[#19283a]">
+        <div className="md:w-96 lg:w-[420px] flex flex-col overflow-hidden border-t md:border-t-0 md:border-l border-white/15 bg-[#3a2419]">
 
           {/* Header del sidebar */}
-          <div className="flex-shrink-0 px-4 py-3 border-b border-border">
-            <h2 className="text-sm font-bold text-foreground uppercase tracking-wide">
+          <div className="flex-shrink-0 px-4 py-3 border-b border-white/15">
+            <h2 className="text-sm font-bold text-white uppercase tracking-wide">
               Puntos de Venta
             </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-white/50 mt-0.5">
               Hacé clic en una agencia para verla en el mapa
             </p>
           </div>

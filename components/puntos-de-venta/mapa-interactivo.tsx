@@ -53,6 +53,10 @@ export function MapaInteractivo({ locales, selectedId, onSelectLocal }: Props) {
       if (!containerRef.current || mapRef.current) return
       LRef.current = L
 
+      // Clear stale Leaflet internal state (React StrictMode runs effects twice)
+      const container = containerRef.current as HTMLDivElement & { _leaflet_id?: number }
+      if (container._leaflet_id != null) delete container._leaflet_id
+
       const map = L.map(containerRef.current, {
         center: ASUNCION,
         zoom: 12,

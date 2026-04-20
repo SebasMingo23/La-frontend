@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import type { Banner } from '@/lib/types'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost/wp-json/la/v1'
@@ -81,6 +81,7 @@ export function BannersSlider() {
   const [current, setCurrent] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const touchStartX = useRef<number>(0)
 
   useEffect(() => {
     fetch(`${API_BASE}/banners`)
@@ -116,13 +117,27 @@ export function BannersSlider() {
 
   const hasMultiple = banners.length > 1
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    setIsPaused(true)
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40) {
+      diff > 0 ? goNext() : goPrev()
+    }
+    setIsPaused(false)
+  }
+
   return (
-    <section className="w-full px-4 md:px-8 py-4">
+    <section className="w-full px-2 md:px-8 py-4">
       <div
-        className="relative w-full rounded-[2.5rem] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.35)]"
-        style={{ aspectRatio: '16 / 5' }}
+        className="relative w-full rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.35)] aspect-[16/9] md:aspect-[16/5]"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Slides */}
         {banners.map((banner, i) => (

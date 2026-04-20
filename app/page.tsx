@@ -19,11 +19,11 @@ export default async function Home() {
     <ScrollBackground>
       <Header />
       <HeroSection />
+      <WinnersSection />
       <BannersSlider />
       <PalpitesSection />
-      <DreamsSearchClient entries={dreamEntries} />
       <PredictionsSection />
-      <WinnersSection />
+      <DreamsSearchClient entries={dreamEntries} />
       <LocationsSection />
       <HowToPlaySection />
       <Footer />

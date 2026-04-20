@@ -1,46 +1,59 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTheme } from "next-themes"
 
-const sectionColors: Record<string, string> = {
-  resultados:   "#2B2B2B",
-  predicciones: "#3D9B4A",
-  suenos:       "#2B2B2B",
-  ganadores:    "#E87722",
-  ubicaciones:  "#2B2B2B",
-  "como-jugar": "#F5C518",
+// Colores del `main` que se ven en los *gaps* entre secciones
+const sectionColorsDark: Record<string, string> = {
+  resultados:   "#111116",
+  ganadores:    "#1E2B3E",
+  predicciones: "#009640",
+  suenos:       "#111116",
+  ubicaciones:  "#4A3123",
+  "como-jugar": "#1E2B3E",
+}
+
+const sectionColorsLight: Record<string, string> = {
+  resultados:   "#e6f9ee",   // tinte verde — combina con los blobs del hero
+  ganadores:    "#ffffff",
+  predicciones: "#009640",
+  suenos:       "#2A2A2A",
+  ubicaciones:  "#4A3123",
+  "como-jugar": "#f8f9fa",
 }
 
 export function ScrollBackground({ children }: { children: React.ReactNode }) {
-  const [bgColor, setBgColor] = useState("#2B2B2B")
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const [bgColor, setBgColor] = useState("#111116")
+
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
-    const sectionIds = Object.keys(sectionColors)
+    const isDark = !mounted || resolvedTheme === "dark"
+    const colorMap = isDark ? sectionColorsDark : sectionColorsLight
+    const sectionIds = Object.keys(colorMap)
 
     const handleScroll = () => {
       const scrollMid = window.scrollY + window.innerHeight * 0.45
-
       let activeSection = sectionIds[0]
       for (const id of sectionIds) {
         const el = document.getElementById(id)
         if (!el) continue
-        if (el.offsetTop <= scrollMid) {
-          activeSection = id
-        }
+        if (el.offsetTop <= scrollMid) activeSection = id
       }
-
-      setBgColor(sectionColors[activeSection] ?? "#2B2B2B")
+      setBgColor(colorMap[activeSection] ?? (isDark ? "#111116" : "#f8f9fa"))
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [mounted, resolvedTheme])
 
   return (
     <main
-      className="min-h-screen transition-colors duration-1000 ease-in-out"
-      style={{ backgroundColor: bgColor }}
+      className="min-h-screen transition-colors duration-700 ease-in-out"
+      style={{ backgroundColor: mounted ? bgColor : "#111116" }}
     >
       {children}
     </main>

@@ -43,8 +43,8 @@ export function LocationsSection() {
 
   return (
     <section
-      id="locales"
-      className="relative py-20 md:py-32 overflow-hidden bg-background"
+      id="puntos-de-venta"
+      className="relative py-20 md:py-32 overflow-hidden bg-[#4A3123]"
     >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -85,10 +85,10 @@ export function LocationsSection() {
                 <MapPin size={16} />
                 Puntos de Venta
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground uppercase tracking-tighter mb-4 font-[var(--font-gunterz)]">
+              <h2 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tighter mb-4 font-[var(--font-gunterz)]">
                 Encuentra tu <span className="text-primary">Agencia</span>
               </h2>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-white/60 text-lg">
                 Todas las ubicaciones en Asunción y Gran Asunción, Paraguay
               </p>
             </motion.div>
@@ -103,25 +103,25 @@ export function LocationsSection() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
                   <Card
-                    className="bg-card border-border hover:border-primary/50 transition-all p-4 rounded-2xl group cursor-pointer"
+                    className="bg-white/8 border-white/15 hover:border-primary/50 transition-all p-4 rounded-2xl group cursor-pointer"
                     onClick={() => router.push(`/puntos-de-venta?id=${local.id}`)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-foreground group-hover:text-primary transition-colors mb-1 truncate">
+                        <h3 className="font-bold text-white group-hover:text-primary transition-colors mb-1 truncate">
                           {local.nombre}
                         </h3>
                         {local.direccion && (
-                          <p className="text-muted-foreground text-sm mb-1 truncate">{local.direccion}</p>
+                          <p className="text-white/60 text-sm mb-1 truncate">{local.direccion}</p>
                         )}
                         {local.telefono && (
-                          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1 text-xs text-white/50">
                             <Phone size={12} className="text-primary flex-shrink-0" />
                             {local.telefono}
                           </span>
                         )}
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-3" />
+                      <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-3" />
                     </div>
                   </Card>
                 </motion.div>
@@ -130,7 +130,7 @@ export function LocationsSection() {
               {locales.length === 0 && (
                 <div className="space-y-3">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="h-16 rounded-2xl bg-card animate-pulse" />
+                    <div key={i} className="h-16 rounded-2xl bg-white/10 animate-pulse" />
                   ))}
                 </div>
               )}

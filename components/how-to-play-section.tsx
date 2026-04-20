@@ -89,10 +89,10 @@ export function HowToPlaySection() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-xl font-bold text-foreground uppercase tracking-tight mb-3 font-[var(--font-gunterz)]">
+                <h3 className="text-xl font-bold text-white uppercase tracking-tight mb-3 font-[var(--font-gunterz)]">
                   {step.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-white/70 text-sm leading-relaxed">
                   {step.description}
                 </p>
               </div>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
+import { ThemeProvider } from '@/components/theme-provider'
 
 const gunterz = localFont({
   src: '../public/fonts/Gunterz-Bold.ttf',
@@ -111,10 +112,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
@@ -122,7 +124,14 @@ export default function RootLayout({
         className={`${gunterz.variable} ${resonate.variable} font-sans antialiased bg-background text-foreground`}
         suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          storageKey="la-theme"
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

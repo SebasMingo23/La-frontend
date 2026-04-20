@@ -24,9 +24,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # NEXT_PUBLIC_* se incrusta en el bundle en tiempo de build,
-# así que la pasamos como build arg
+# por eso se pasan como build args (no como env en runtime).
 ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

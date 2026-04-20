@@ -3,16 +3,17 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { Menu, X, ChevronDown, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTheme } from "next-themes"
 
 // ─── Navegación principal ────────────────────────────────────────────────────
 const navLinks = [
+  { href: "/#ganadores",      label: "Ganadores"       },
   { href: "/#predicciones",   label: "Palpites IA"     },
   { href: "/#suenos",         label: "Libro de Sueños" },
   { href: "/puntos-de-venta", label: "Puntos de Venta" },
-  { href: "/#ganadores",      label: "Ganadores"       },
 ]
 
 // ─── Dropdown "Institucional" ────────────────────────────────────────────────
@@ -22,11 +23,46 @@ const institucionalLinks = [
   { href: "/reglamento",        label: "Reglamento"       },
 ]
 
+// ─── Toggle Tema ─────────────────────────────────────────────────────────────
+function ThemeToggle({ scrolled }: { scrolled: boolean }) {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  // Placeholder sin ícono para evitar layout shift en SSR
+  if (!mounted) return <div className="w-9 h-9 rounded-xl" />
+
+  const isDark = theme === "dark"
+  return (
+    <button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
+      className={`
+        w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer
+        ${scrolled
+          ? "bg-[#2B2B2B]/8 hover:bg-[#2B2B2B]/15 text-[#2B2B2B] dark:bg-white/10 dark:hover:bg-white/18 dark:text-white"
+          : "bg-white/10 hover:bg-white/20 text-white"
+        }
+      `}
+    >
+      {isDark
+        ? <Sun  size={16} className="transition-transform duration-300" />
+        : <Moon size={16} className="transition-transform duration-300" />
+      }
+    </button>
+  )
+}
+
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen]   = useState(false)
   const [scrolled,       setScrolled]         = useState(false)
   const [dropdownOpen,   setDropdownOpen]     = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  // En light mode la navbar es siempre sólida (el video de fondo la haría ilegible si fuera transparente)
+  const isLight = mounted && resolvedTheme === "light"
 
   // Scroll detection
   useEffect(() => {
@@ -64,25 +100,35 @@ export function Header() {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 ${
-        scrolled
-          ? "bg-loteria-dark/95 backdrop-blur-md border-b border-loteria-gold/20 shadow-lg"
-          : "bg-transparent border-b border-transparent"
+        isLight
+          ? "bg-white shadow-sm border-b border-gray-100"
+          : scrolled
+            ? "bg-[#1E2B3E]/97 backdrop-blur-md border-b border-[#009640]/30 shadow-[0_2px_20px_rgba(0,0,0,0.4)]"
+            : "bg-transparent border-b border-transparent"
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
+      {/* Barra superior verde-naranja */}
+      <div className="h-1 w-full bg-gradient-to-r from-[#009640] via-[#FFCC00] to-[#F58220]" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
 
-          {/* Logo */}
+          {/* Logo — adaptativo: blanco en hero, negro/dorado según tema al hacer scroll */}
           <Link href="/" className="flex-shrink-0">
             <Image
-              src="/images/logo.png"
+              src={
+                isLight
+                  ? "/images/logos/logo-negro.png"
+                  : (!mounted || !scrolled)
+                    ? "/images/logos/logo-blanco.png"
+                    : "/images/logos/logo-dorado.png"
+              }
               alt="Lotería de Animales"
               width={300}
               height={90}
-              className="h-16 md:h-18 w-auto"
+              className="h-16 md:h-[72px] w-auto transition-opacity duration-300"
               priority
             />
           </Link>
@@ -94,7 +140,9 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleSmoothScroll(e, link.href)}
-                className="text-foreground/80 hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide whitespace-nowrap"
+                className={`relative font-medium text-sm uppercase tracking-wide whitespace-nowrap transition-colors hover:text-[#009640]
+                  after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#F58220] after:transition-all after:duration-300 hover:after:w-full
+                  ${isLight ? "text-[#2B2B2B]" : scrolled ? "text-white/90" : "text-white/85"}`}
               >
                 {link.label}
               </Link>
@@ -104,7 +152,7 @@ export function Header() {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="flex items-center gap-1 text-foreground/80 hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide whitespace-nowrap"
+                className={`flex items-center gap-1 font-medium text-sm uppercase tracking-wide whitespace-nowrap transition-colors hover:text-[#009640] ${isLight ? "text-[#2B2B2B]" : scrolled ? "text-white/90" : "text-white/85"}`}
               >
                 Institucional
                 <ChevronDown
@@ -143,13 +191,14 @@ export function Header() {
             </div>
           </nav>
 
-          {/* Desktop CTA — Resultados (con badge VIVO) + Login */}
+          {/* Desktop CTA — Resultados (con badge VIVO) + Toggle + Login */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle scrolled={scrolled || isLight} />
             {/* Resultados con badge VIVO integrado */}
             <div className="relative">
               {/* Badge VIVO — esquina superior derecha del botón */}
               <span className="absolute -top-2.5 -right-2 z-10 flex items-center gap-1
-                               px-1.5 py-0.5 bg-red-500 rounded-full pointer-events-none">
+                               px-1.5 py-0.5 bg-[#009640] rounded-full pointer-events-none">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
@@ -161,32 +210,34 @@ export function Header() {
               </span>
               <Button
                 asChild
-                variant="outline"
-                className="border-2 border-primary/50 hover:border-primary hover:bg-primary
-                           text-primary hover:text-white font-bold uppercase tracking-wide
-                           text-sm transition-all cursor-pointer"
+                className="bg-gradient-to-r from-[#F58220] to-[#FF9D00] text-white font-bold uppercase tracking-wide
+                           text-sm shadow-[0_4px_16px_rgba(245,130,32,0.4)] hover:shadow-[0_8px_24px_rgba(245,130,32,0.6)]
+                           hover:scale-105 transition-all cursor-pointer border-0"
               >
                 <Link href="/resultados">Resultados</Link>
               </Button>
             </div>
 
-            <Button
-              asChild
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold
-                         uppercase tracking-wide shadow-[0_0_20px_rgba(255,122,0,0.4)]
-                         hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] transition-all cursor-pointer"
+            <a
+              href="https://dev.loteriadeanimales.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-5 py-2.5 rounded-xl font-black uppercase tracking-wide text-sm
+                         bg-gradient-to-r from-[#009640] to-[#00b84a]
+                         text-white shadow-[0_4px_16px_rgba(0,150,64,0.4)]
+                         hover:shadow-[0_8px_24px_rgba(0,150,64,0.55)] hover:scale-105
+                         transition-all duration-300 cursor-pointer"
             >
-              <a href="https://dev.loteriadeanimales.app" target="_blank" rel="noopener noreferrer">
-                Login
-              </a>
-            </Button>
+              Login
+            </a>
           </div>
 
-          {/* Mobile: Resultados + hamburger */}
+          {/* Mobile: Toggle + Resultados + hamburger */}
           <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle scrolled={scrolled || isLight} />
             <div className="relative">
               <span className="absolute -top-2 -right-1.5 z-10 flex items-center gap-0.5
-                               px-1 py-0.5 bg-red-500 rounded-full pointer-events-none">
+                               px-1 py-0.5 bg-[#009640] rounded-full pointer-events-none">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
@@ -198,10 +249,9 @@ export function Header() {
               <Button
                 asChild
                 size="sm"
-                variant="outline"
-                className="border-2 border-primary/60 hover:border-primary hover:bg-primary
-                           text-primary hover:text-white font-bold uppercase tracking-wide
-                           text-xs px-3 h-8 transition-all cursor-pointer"
+                className="bg-gradient-to-r from-[#F58220] to-[#FF9D00] text-white font-bold uppercase tracking-wide
+                           text-xs px-3 h-8 shadow-[0_4px_12px_rgba(245,130,32,0.4)]
+                           transition-all cursor-pointer border-0"
               >
                 <Link href="/resultados">Resultados</Link>
               </Button>
@@ -225,7 +275,7 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#2B2B2B]/95 backdrop-blur-md border-b border-border"
+            className="md:hidden bg-white/98 dark:bg-[#1E2B3E]/98 backdrop-blur-md border-b border-[#009640]/20 dark:border-[#009640]/30 shadow-lg"
           >
             <nav className="flex flex-col px-4 py-4 gap-1">
               {/* Links principales */}
@@ -234,9 +284,9 @@ export function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleMobileClick(e, link.href)}
-                  className="text-foreground/80 hover:text-primary transition-colors
+                  className="text-[#2B2B2B] dark:text-white/90 hover:text-[#009640] dark:hover:text-[#009640] transition-colors
                              font-medium text-sm uppercase tracking-wide py-2.5 px-2
-                             rounded-xl hover:bg-primary/5"
+                             rounded-xl hover:bg-[#009640]/5 dark:hover:bg-[#009640]/10"
                 >
                   {link.label}
                 </Link>
@@ -253,9 +303,9 @@ export function Header() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-foreground/70 hover:text-primary transition-colors
+                    className="text-[#2B2B2B]/70 dark:text-white/60 hover:text-[#009640] dark:hover:text-[#009640] transition-colors
                                font-medium text-sm uppercase tracking-wide py-2.5 px-2
-                               rounded-xl hover:bg-primary/5 block"
+                               rounded-xl hover:bg-[#009640]/5 dark:hover:bg-[#009640]/10 block"
                   >
                     {link.label}
                   </Link>
@@ -266,29 +316,25 @@ export function Header() {
               <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-border/40">
                 <Button
                   asChild
-                  variant="outline"
-                  className="w-full border-2 border-primary/50 hover:border-primary hover:bg-primary
-                             text-primary hover:text-white font-bold uppercase tracking-wide
-                             transition-all cursor-pointer"
+                  className="w-full bg-gradient-to-r from-[#F58220] to-[#FF9D00] text-white font-bold uppercase tracking-wide
+                             shadow-[0_4px_16px_rgba(245,130,32,0.4)] transition-all cursor-pointer border-0"
                 >
                   <Link href="/resultados" onClick={() => setMobileMenuOpen(false)}>
                     Resultados
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground
-                             font-bold uppercase tracking-wide cursor-pointer"
+                <a
+                  href="https://dev.loteriadeanimales.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center px-4 py-3 rounded-xl font-black uppercase tracking-wide
+                             bg-gradient-to-r from-[#009640] to-[#00b84a]
+                             text-white shadow-[0_4px_16px_rgba(0,150,64,0.4)]
+                             transition-all duration-300 cursor-pointer"
                 >
-                  <a
-                    href="https://dev.loteriadeanimales.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Login
-                  </a>
-                </Button>
+                  Login
+                </a>
               </div>
             </nav>
           </motion.div>

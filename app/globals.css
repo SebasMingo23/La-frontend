@@ -3,39 +3,41 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Light Mode (default) ────────────────────────────────────────── */
 :root {
-  --background: #1E2B3E;
-  --foreground: #F5F5F5;
-  --card: #263447;
-  --card-foreground: #F5F5F5;
-  --popover: #1E2B3E;
-  --popover-foreground: #F5F5F5;
+  color-scheme: light;
+  --background: #F8F9FA;
+  --foreground: #2B2B2B;
+  --card: #FFFFFF;
+  --card-foreground: #2B2B2B;
+  --popover: #FFFFFF;
+  --popover-foreground: #2B2B2B;
   --primary: #FF7A00;
-  --primary-foreground: #1E2B3E;
-  --secondary: #BDD96C;
-  --secondary-foreground: #1E2B3E;
-  --muted: #2D3E54;
-  --muted-foreground: #9CA3AF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F0F2F5;
+  --secondary-foreground: #2B2B2B;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
   --accent: #F5B500;
-  --accent-foreground: #1E2B3E;
+  --accent-foreground: #2B2B2B;
   --destructive: #EF4444;
-  --destructive-foreground: #F5F5F5;
-  --border: #3D4F65;
-  --input: #2D3E54;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E7EB;
+  --input: #F3F4F6;
   --ring: #FF7A00;
   --chart-1: #FF7A00;
-  --chart-2: #BDD96C;
+  --chart-2: #009640;
   --chart-3: #F5B500;
   --chart-4: #3B82F6;
   --chart-5: #A31621;
   --radius: 0.75rem;
-  --sidebar: #1E2B3E;
-  --sidebar-foreground: #F5F5F5;
+  --sidebar: #F8F9FA;
+  --sidebar-foreground: #2B2B2B;
   --sidebar-primary: #FF7A00;
-  --sidebar-primary-foreground: #1E2B3E;
-  --sidebar-accent: #2D3E54;
-  --sidebar-accent-foreground: #F5F5F5;
-  --sidebar-border: #3D4F65;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F0F2F5;
+  --sidebar-accent-foreground: #2B2B2B;
+  --sidebar-border: #E5E7EB;
   --sidebar-ring: #FF7A00;
 
   /* Kinetic UI — Lotería color tokens */
@@ -62,7 +64,9 @@
   --bg-deep:    #1a1a1a;
 }
 
+/* ── Dark Mode ───────────────────────────────────────────────────── */
 .dark {
+  color-scheme: dark;
   --background: #1E2B3E;
   --foreground: #F5F5F5;
   --card: #263447;
@@ -163,32 +167,127 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Transición suave al cambiar tema — solo propiedades visuales, no interfiere con motion */
+  html {
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Oráculo — borde con gradiente animado rotativo
-   Wrapper externo del panel: padding 1px = espesor del borde
+   IxD — Micro-interacciones Premium
    ──────────────────────────────────────────────────────────────── */
-.oraculo-panel {
+
+/* Oracle — shimmer scan en textarea mientras procesa */
+@keyframes oracleScan {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.oracle-scanning {
   background: linear-gradient(
-    135deg,
-    rgba(255, 204,  0, 0.65) 0%,
-    rgba(255, 204,  0, 0.05) 25%,
-    rgba(  0, 150, 64, 0.35) 50%,
-    rgba(255, 204,  0, 0.05) 75%,
-    rgba(245, 130, 32, 0.45) 100%
-  );
-  background-size: 300% 300%;
-  padding: 1px;
-  border-radius: 2rem;
-  animation: rotateBorder 4s linear infinite;
+    105deg,
+    transparent 40%,
+    rgba(255, 204, 0, 0.14) 50%,
+    transparent 60%
+  ) no-repeat;
+  background-size: 200% 100%;
+  animation: oracleScan 1.4s ease-in-out infinite;
 }
 
-@keyframes rotateBorder {
-  0%   { background-position:   0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position:   0% 50%; }
+/* Oracle — partículas doradas ascendentes */
+.oracle-particle {
+  position: absolute;
+  bottom: 8px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 204, 0, 0.75);
+  opacity: 0;
+  animation: particleRise var(--particle-dur, 2s)
+             cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+  animation-delay: var(--particle-delay, 0s);
 }
+@keyframes particleRise {
+  0%   { transform: translateY(0)     scale(1);   opacity: 0;   }
+  15%  {                                           opacity: 0.85; }
+  80%  {                                           opacity: 0.3;  }
+  100% { transform: translateY(-72px) scale(0);   opacity: 0;   }
+}
+
+/* Número ganador — Reveal al montar */
+@keyframes number-reveal {
+  from { transform: scale(0.75); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Número ganador — Victory Pulse (onda sonar verde) */
+@keyframes victoryPulse {
+  0%   { box-shadow:
+    0 0 40px rgba(0,150,64,0.7),
+    0 0 80px rgba(0,150,64,0.4),
+    0 0  0  0px rgba(0,150,64,0.55),
+    inset 0 2px 0 rgba(255,255,255,0.2); }
+  100% { box-shadow:
+    0 0 40px rgba(0,150,64,0.7),
+    0 0 80px rgba(0,150,64,0.4),
+    0 0  0 22px rgba(0,150,64,0),
+    inset 0 2px 0 rgba(255,255,255,0.2); }
+}
+.winner-badge-pulse {
+  animation: victoryPulse 1.8s ease-out 0s 2;
+}
+
+/* CTA "Jugar Ahora" — Liquid Gold shimmer */
+.btn-liquid-gold {
+  position: relative;
+  overflow: hidden;
+}
+.btn-liquid-gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%
+  );
+  transform: translateX(-110%);
+  transition: transform 0s;
+  pointer-events: none;
+  z-index: 1;
+}
+.btn-liquid-gold:hover::before {
+  transform: translateX(110%);
+  transition: transform 0.55s ease;
+}
+
+/* CTA "Sorteo en Vivo" — Broadcast pulse */
+.broadcast-icon {
+  animation: broadcastPulse 2s ease-in-out infinite;
+}
+@keyframes broadcastPulse {
+  0%,  100% { opacity: 1;   transform: scale(1);    }
+  50%        { opacity: 0.6; transform: scale(0.88); }
+}
+
+/* Grilla — Golden Bloom en el ícono del animal */
+.animal-icon {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter   0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.animal-card:not([data-dimmed="true"]):hover .animal-icon {
+  transform: scale(1.12) translateY(-3px);
+  filter: drop-shadow(0 0 10px rgba(255, 204, 0, 0.65));
+}
+
+/* Fondo billetes — parallax via CSS custom property */
+.oracle-bg-texture {
+  transform: translateY(var(--parallax-y, 0px));
+  transition: transform 0.08s linear;
+  will-change: transform;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Oráculo — borde cónico estilo Gemini (conic-gradient + spin)
+   La clase .oraculo-panel ya no se usa — reemplazada por JSX inline
+   ──────────────────────────────────────────────────────────────── */
 
 /* ─────────────────────────────────────────────────────────────────
    Separadores dorados entre secciones

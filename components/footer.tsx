@@ -79,11 +79,11 @@ export async function Footer() {
           <div className="col-span-2 md:col-span-4 lg:col-span-1 mb-8 lg:mb-0">
             <Link href="/" className="inline-block mb-6">
               <Image
-                src="/images/logo.png"
+                src="/images/logos/logo-dorado.png"
                 alt="Lotería de Animales"
-                width={160}
-                height={44}
-                className="h-10 w-auto"
+                width={280}
+                height={80}
+                className="h-24 w-auto"
               />
             </Link>
             <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
@@ -115,7 +115,7 @@ export async function Footer() {
 
           {/* Juego Links */}
           <div>
-            <h3 className="text-foreground font-bold uppercase tracking-wide text-sm mb-4">
+            <h3 className="text-white font-bold uppercase tracking-wide text-sm mb-4">
               Juego
             </h3>
             <ul className="space-y-3">
@@ -134,7 +134,7 @@ export async function Footer() {
 
           {/* Empresa Links */}
           <div>
-            <h3 className="text-foreground font-bold uppercase tracking-wide text-sm mb-4">
+            <h3 className="text-white font-bold uppercase tracking-wide text-sm mb-4">
               Empresa
             </h3>
             <ul className="space-y-3">
@@ -153,7 +153,7 @@ export async function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="text-foreground font-bold uppercase tracking-wide text-sm mb-4">
+            <h3 className="text-white font-bold uppercase tracking-wide text-sm mb-4">
               Legal
             </h3>
             <ul className="space-y-3">
@@ -173,7 +173,7 @@ export async function Footer() {
           {/* Contact — solo se renderiza si hay datos */}
           {(phone || email) && (
             <div>
-              <h3 className="text-foreground font-bold uppercase tracking-wide text-sm mb-4">
+              <h3 className="text-white font-bold uppercase tracking-wide text-sm mb-4">
                 Contacto
               </h3>
               <ul className="space-y-3">
@@ -216,6 +216,13 @@ export async function Footer() {
           <p>© {new Date().getFullYear()} Lotería de Animales. Todos los derechos reservados.</p>
           <p className="text-center">El juego es solo para mayores de 18 años. Jugá responsablemente.</p>
         </div>
+      </div>
+
+      {/* Developer Credit */}
+      <div className="w-full text-center py-4 mt-8 border-t border-black/5 dark:border-white/5">
+        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">
+          Diseñado y desarrollado por Sebastián Mingo
+        </p>
       </div>
     </footer>
   )

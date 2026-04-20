@@ -1,0 +1,104 @@
+# ══════════════════════════════════════════════════════════════════
+#  Lotería de Animales — Frontend v2 (despliegue paralelo)
+#
+#  PROPÓSITO:
+#    Levantar el nuevo frontend (v2) en paralelo al v1, en un
+#    subdominio propio de staging, SIN tocar los servicios en curso.
+#    El backend (WordPress), la base de datos y Traefik ya corren
+#    en el stack principal (docker-compose.yml).
+#
+#  HOST v2:   https://v2.staging.187.77.251.126.nip.io
+#  HOST v1:   https://staging.187.77.251.126.nip.io   ← sin cambios
+#
+#  REDES:
+#    web-network  → red externa de Traefik (ya existe, declarada external)
+#
+#  NOTA: loteria-net NO se monta aquí porque es internal:true (sin routing
+#  externo). Traefik corre en network_mode:host sin --providers.docker.network,
+#  por lo que necesita que el contenedor esté SOLO en web-network para elegir
+#  el IP correcto (172.19.x.x) al establecer el backend.
+#
+#  COMANDO DE DESPLIEGUE (ver abajo, sección INSTRUCCIONES):
+#    docker compose -f docker-compose.v2.yml --project-name loteria-v2 up -d --build
+#
+# ══════════════════════════════════════════════════════════════════
+
+services:
+
+  # ──────────────────────────────────────────────────────────────
+  #  FRONTEND v2 — Next.js 16 (output: standalone)
+  # ──────────────────────────────────────────────────────────────
+  frontend-v2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* se hornean en el bundle durante el build.
+        # Cambiarlos aquí requiere reconstruir la imagen.
+        NEXT_PUBLIC_API_URL:  "https://api.187.77.251.126.nip.io/wp-json/la/v1"
+        NEXT_PUBLIC_SITE_URL: "https://v2.staging.187.77.251.126.nip.io"
+
+    # Etiqueta explícita para diferenciar de v1 (loteria-frontend:latest)
+    image: loteria-frontend:v2
+
+    restart: unless-stopped
+
+    # Variables de runtime (no se hornean en el bundle).
+    # REVALIDATE_SECRET es privada — nunca usar NEXT_PUBLIC_
+    environment:
+      NODE_ENV:           "production"
+      NEXT_TELEMETRY_DISABLED: "1"
+      PORT:               "3000"
+      HOSTNAME:           "0.0.0.0"
+      REVALIDATE_SECRET:  "LTA_2026_SecR3t_w3bh00k_9f8d7c6b5a"
+
+    expose:
+      - "3000"
+
+    networks:
+      - web-network
+
+    labels:
+      # ── Habilitar Traefik y declarar la red correcta ──────────────────────
+      - "traefik.enable=true"
+      - "traefik.docker.network=web-network"
+
+      # ── Servicio: puerto interno de Next.js ───────────────────────────────
+      - "traefik.http.services.frontend-v2-svc.loadbalancer.server.port=3000"
+
+      # ── Middleware propio de v2: HTTP → HTTPS ─────────────────────────────
+      # Definido aquí para que v2 sea 100% autónomo y no dependa del
+      # middleware del stack v1. Nombrado con prefijo "v2-" para evitar
+      # colisión con el middleware "redirect-to-https" del frontend v1.
+      - "traefik.http.middlewares.v2-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.v2-https-redirect.redirectscheme.permanent=true"
+
+      # ── Router HTTP (80) → redirige a HTTPS ──────────────────────────────
+      - "traefik.http.routers.frontend-v2-http.rule=Host(`v2.staging.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.frontend-v2-http.entrypoints=web"
+      - "traefik.http.routers.frontend-v2-http.middlewares=v2-https-redirect"
+      - "traefik.http.routers.frontend-v2-http.service=frontend-v2-svc"
+
+      # ── Router HTTPS (443) con TLS + Let's Encrypt ────────────────────────
+      - "traefik.http.routers.frontend-v2-https.rule=Host(`v2.staging.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.frontend-v2-https.entrypoints=websecure"
+      - "traefik.http.routers.frontend-v2-https.tls=true"
+      - "traefik.http.routers.frontend-v2-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend-v2-https.service=frontend-v2-svc"
+
+    # Health check: Next.js responde en / con 200 cuando está listo
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ > /dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+
+# ══════════════════════════════════════════════════════════════════
+#  REDES
+# ══════════════════════════════════════════════════════════════════
+networks:
+  # Red de Traefik — ya existe, no la creamos
+  web-network:
+    external: true

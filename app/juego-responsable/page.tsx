@@ -3,6 +3,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { WhatsAppButton } from "@/components/whatsapp-button"
 import { getPages } from "@/lib/api"
+import { sanitizeWpHtml } from "@/lib/sanitize"
 
 export const metadata = {
   title: "Juego Responsable | Lotería de Animales",
@@ -56,7 +57,7 @@ export default async function JuegoResponsablePage() {
           {html ? (
             <article
               className="wp-content bg-card rounded-[2.5rem] p-8 md:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.3)]"
-              dangerouslySetInnerHTML={{ __html: html }}
+              dangerouslySetInnerHTML={{ __html: sanitizeWpHtml(html ?? "") }}
             />
           ) : (
             <div className="bg-card rounded-[2.5rem] p-12 md:p-16 text-center shadow-[0_8px_40px_rgba(0,0,0,0.3)]">

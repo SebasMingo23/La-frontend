@@ -1,29 +1,23 @@
-import type { UltimoResultado, Ganador, Resultado, Local, Predicciones, Palpite, DreamEntry, PagesContent, SiteSettings } from '@/lib/types'
+import type { UltimoResultado, Resultado, Local, Predicciones, Palpite, DreamEntry, PagesContent, SiteSettings } from '@/lib/types'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost/wp-json/la/v1'
 
+const FETCH_TIMEOUT_MS = 8_000
+
 async function apiFetch<T>(endpoint: string, revalidate = 60): Promise<T> {
-  try {
-    const res = await fetch(`${API_BASE}${endpoint}`, {
-      next: { revalidate },
-    })
-    if (!res.ok) {
-      const body = await res.text()
-      console.error(`[apiFetch] ${res.status} en ${endpoint} — body:`, body)
-      throw new Error(`API error ${res.status} en ${endpoint}`)
-    }
-    return res.json() as Promise<T>
-  } catch (error) {
-    console.error(`[apiFetch] Error en ${endpoint}:`, error)
-    throw error
+  const res = await fetch(`${API_BASE}${endpoint}`, {
+    next: { revalidate },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  })
+  if (!res.ok) {
+    throw new Error(`API error ${res.status} en ${endpoint}`)
   }
+  return res.json() as Promise<T>
 }
 
 export const getUltimoResultado = () =>
   apiFetch<UltimoResultado>('/ultimo-resultado', 30)
 
-export const getGanadores = (limit = 6) =>
-  apiFetch<Ganador[]>(`/ganadores?limit=${limit}`, 300)
 
 export const getResultados = (limit = 20, fecha?: string, turno?: string) => {
   const params = new URLSearchParams({ limit: String(limit) })
@@ -38,8 +32,28 @@ export const getLocales = () =>
 export const getPredicciones = () =>
   apiFetch<Predicciones>('/predicciones', 300)
 
-export const getPalpites = () =>
-  apiFetch<Palpite[]>('/palpites', 3600)
+type PrediccionRaw = {
+  animal_id: string
+  animal_name: string
+  thousand: string
+  hundred: string
+  ten: string
+  date?: string
+}
+
+export const getPalpites = async (): Promise<Palpite[]> => {
+  const raw = await apiFetch<PrediccionRaw[]>('/predicciones', 3600)
+  return raw.map((item, index) => ({
+    id:           parseInt(item.animal_id, 10),
+    nombre_animal: item.animal_name,
+    numero:        item.animal_id.padStart(2, '0'),
+    milesima:      item.thousand,
+    cento:         item.hundred,
+    docena:        item.ten,
+    image_url:     '',
+    confianza:     Math.max(90 - index * 5, 55),
+  }))
+}
 
 export const getDreamsDictionary = () =>
   apiFetch<DreamEntry[]>('/dreams-dictionary', 3600)
