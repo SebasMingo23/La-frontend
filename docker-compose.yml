@@ -21,6 +21,10 @@ services:
   traefik:
     image: traefik:v3.1
     restart: unless-stopped
+    environment:
+      # Fuerza la versión de API de Docker. El cliente Go de Traefik negocia
+      # v1.24 por defecto; Docker Engine 25+ requiere mínimo v1.44.
+      DOCKER_API_VERSION: "1.44"
     ports:
       - "80:80"       # HTTP  — necesario para el challenge ACME y redirect
       - "443:443"     # HTTPS — tráfico SSL terminado aquí
