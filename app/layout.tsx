@@ -15,7 +15,7 @@ const resonate = localFont({
   display: 'swap',
 })
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://loteriadeanimales.com.py'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://loteriadeanimales.com.py'
 const SITE_NAME = 'Lotería de Animales'
 const SITE_DESCRIPTION =
   'La lotería de animales más emocionante de Paraguay. Resultados en vivo, predicciones con IA y premios increíbles.'
