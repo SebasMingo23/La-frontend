@@ -78,9 +78,7 @@ const item = {
 
 export function PredictionsSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({
-    layoutEffect: false,
-  })
+  const { scrollYProgress } = useScroll()
   
   const parallaxY1 = useTransform(scrollYProgress, [0, 1], [50, -50])
   const parallaxY2 = useTransform(scrollYProgress, [0, 1], [100, -100])
