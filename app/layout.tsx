@@ -157,7 +157,6 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
           storageKey="la-theme"
-          suppressHydrationWarning
         >
           {children}
         </ThemeProvider>
