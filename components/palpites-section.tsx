@@ -115,6 +115,7 @@ function SugerenciaCard({ s, rank }: { s: Sugerencia; rank: number }) {
           src={s.image}
           alt={s.nombre}
           fill
+          sizes="(max-width: 768px) 100vw, 33vw"
           className="object-contain drop-shadow-[0_0_20px_rgba(245,181,0,0.4)]"
         />
       </div>
@@ -190,7 +191,7 @@ export function PalpitesSection() {
 
   return (
     <section
-      id="predicciones"
+      id="palpites"
       className="relative py-20 md:py-28 overflow-hidden bg-[#F0F2F5] dark:bg-[#111116] transition-colors duration-300"
     >
       {/* Decoración */}

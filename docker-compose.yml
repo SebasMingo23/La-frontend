@@ -96,6 +96,9 @@ services:
         define('WP_HOME',    '${WP_HOME_URL}');
         define('WP_SITEURL', '${WP_HOME_URL}');
         define('FORCE_SSL_ADMIN', true);
+        define('WP_ENVIRONMENT_TYPE', 'production');
+        define('LA_NEXTJS_URL',        '${LA_NEXTJS_URL}');
+        define('LA_REVALIDATE_SECRET', '${REVALIDATE_SECRET}');
         if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
           $$_SERVER['HTTPS'] = 'on';
         }
@@ -115,7 +118,7 @@ services:
       # Necesario para Client Components que hacen fetch desde el browser.
       # Traefik agrega estos headers a todas las respuestas del backend,
       # sin tocar WordPress ni requerir rebuild del frontend.
-      - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Origin=https://staging.187.77.251.126.nip.io"
+      - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Origin=${CORS_ALLOW_ORIGIN}"
       - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Methods=GET, POST, OPTIONS"
       - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Headers=Content-Type, Authorization, X-WP-Nonce"
 
@@ -164,13 +167,19 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_API_URL:    ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_SITE_URL:   ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_WP_URL:     ${NEXT_PUBLIC_WP_URL}
+        NEXT_PUBLIC_LOGIN_URL:  ${NEXT_PUBLIC_LOGIN_URL}
     image: loteria-frontend:latest
     restart: unless-stopped
     depends_on:
       - backend
     env_file:
       - .env.production
+    environment:
+      # Llamadas BFF server-side van por red interna (loteria-net), sin pasar por Traefik.
+      WORDPRESS_INTERNAL_URL: http://backend/wp-json/la/v1
     expose:
       - "3000"
     networks:

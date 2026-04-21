@@ -1,6 +1,7 @@
 import type { UltimoResultado, Resultado, Local, Predicciones, Palpite, DreamEntry, PagesContent, SiteSettings } from '@/lib/types'
+import { WORDPRESS_API_URL } from '@/lib/constants'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost/wp-json/la/v1'
+const API_BASE = WORDPRESS_API_URL
 
 const FETCH_TIMEOUT_MS = 8_000
 

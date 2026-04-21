@@ -7,7 +7,9 @@ import { animals } from "@/lib/animals"
 import type { DreamEntry } from "@/lib/types"
 import { useTheme } from "next-themes"
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/wp-json/la/v1"
+import { WORDPRESS_API_URL } from '@/lib/constants'
+
+const API_BASE = WORDPRESS_API_URL
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -374,7 +376,9 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const sectionRef  = useRef<HTMLElement>(null)
   const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isDark = mounted && resolvedTheme === "dark"
 
   // Parallax suave en la textura de billetes — responde al scroll del usuario
   useEffect(() => {

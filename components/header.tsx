@@ -2,6 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
+
+const LOGIN_URL = process.env.NEXT_PUBLIC_LOGIN_URL ?? 'https://dev.loteriadeanimales.app'
 import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -112,7 +114,7 @@ export function Header() {
     >
       {/* Barra superior verde-naranja */}
       <div className="h-1 w-full bg-gradient-to-r from-[#009640] via-[#FFCC00] to-[#F58220]" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
 
           {/* Logo — adaptativo: blanco en hero, negro/dorado según tema al hacer scroll */}
@@ -219,7 +221,7 @@ export function Header() {
             </div>
 
             <a
-              href="https://dev.loteriadeanimales.app"
+              href={LOGIN_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-5 py-2.5 rounded-xl font-black uppercase tracking-wide text-sm
@@ -275,7 +277,7 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white/98 dark:bg-[#1E2B3E]/98 backdrop-blur-md border-b border-[#009640]/20 dark:border-[#009640]/30 shadow-lg"
+            className="md:hidden relative bg-white/98 dark:bg-[#1E2B3E]/98 backdrop-blur-md border-b border-[#009640]/20 dark:border-[#009640]/30 shadow-lg"
           >
             <nav className="flex flex-col px-4 py-4 gap-1">
               {/* Links principales */}
@@ -324,7 +326,7 @@ export function Header() {
                   </Link>
                 </Button>
                 <a
-                  href="https://dev.loteriadeanimales.app"
+                  href={LOGIN_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}

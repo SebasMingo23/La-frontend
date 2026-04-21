@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { Banner } from '@/lib/types'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost/wp-json/la/v1'
+import { WORDPRESS_API_URL } from '@/lib/constants'
+
+const API_BASE = WORDPRESS_API_URL
 
 /** Garantiza URL absoluta — WP a veces devuelve paths relativos en staging */
 function toAbsoluteUrl(url: string): string {

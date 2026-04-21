@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const isDev = process.env.NODE_ENV === 'development'
+
 const nextConfig = {
   output: 'standalone',
   typescript: {
@@ -29,17 +31,31 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains; preload',
           },
-          // CSP — whitelist estricta de orígenes permitidos
+          // CSP — estricta en producción, ampliada en desarrollo
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline'",   // requerido por Next.js inline hydration
-              "style-src 'self' 'unsafe-inline'",    // requerido por Tailwind
-              "img-src 'self' data: blob: https://api.loteriadeanimales.com.py https://api.187.77.251.126.nip.io https://hebbkx1anhila5yf.public.blob.vercel-storage.com",
+              isDev
+                ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"  // unsafe-eval solo para HMR en dev
+                : "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              [
+                "img-src 'self' data: blob:",
+                "https://api.loteriadeanimales.com.py",
+                "https://api.187.77.251.126.nip.io",
+                "https://hebbkx1anhila5yf.public.blob.vercel-storage.com",
+                "https://*.basemaps.cartocdn.com",
+                isDev ? "http://loteria-animales.local http://localhost:3000" : "",
+              ].filter(Boolean).join(' '),
               "media-src 'self'",
               "font-src 'self'",
-              "connect-src 'self' https://api.loteriadeanimales.com.py https://api.187.77.251.126.nip.io",
+              [
+                "connect-src 'self'",
+                "https://api.loteriadeanimales.com.py",
+                "https://api.187.77.251.126.nip.io",
+                isDev ? "http://loteria-animales.local http://localhost:3000" : "",
+              ].filter(Boolean).join(' '),
               "frame-ancestors 'none'",
             ].join('; '),
           },

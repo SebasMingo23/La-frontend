@@ -166,6 +166,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    position: relative;
   }
   /* Transición suave al cambiar tema — solo propiedades visuales, no interfiere con motion */
   html {

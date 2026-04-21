@@ -115,6 +115,34 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function clean(node) {
+                  if (node.nodeType !== 1) return;
+                  Array.from(node.attributes).forEach(function(attr) {
+                    if (attr.name.startsWith('bis_')) node.removeAttribute(attr.name);
+                  });
+                }
+                const observer = new MutationObserver(function(mutations) {
+                  mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName.startsWith('bis_')) {
+                      mutation.target.removeAttribute(mutation.attributeName);
+                    }
+                    mutation.addedNodes.forEach(function(node) { clean(node); });
+                  });
+                });
+                observer.observe(document.documentElement, {
+                  childList: true,
+                  subtree: true,
+                  attributes: true
+                });
+              })();
+            `,
+          }}
+        />
+        <script
           type="application/ld+json"
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -129,6 +157,7 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
           storageKey="la-theme"
+          suppressHydrationWarning
         >
           {children}
         </ThemeProvider>

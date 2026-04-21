@@ -52,8 +52,8 @@ export function ScrollBackground({ children }: { children: React.ReactNode }) {
 
   return (
     <main
-      className="min-h-screen transition-colors duration-700 ease-in-out"
-      style={{ backgroundColor: mounted ? bgColor : "#111116" }}
+      className="relative min-h-screen transition-colors duration-700 ease-in-out"
+      style={{ position: 'relative', backgroundColor: mounted ? bgColor : "#111116" }}
     >
       {children}
     </main>

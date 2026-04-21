@@ -19,10 +19,10 @@ import { NextRequest, NextResponse } from 'next/server'
 // En Docker, el frontend puede llamar a WordPress directamente por nombre de servicio
 // (red interna, sin pasar por Traefik). Se configura con WORDPRESS_INTERNAL_URL
 // en el docker-compose. Si no está definida, cae a la URL pública.
-const WORDPRESS_API =
-  process.env.WORDPRESS_INTERNAL_URL ??
-  process.env.NEXT_PUBLIC_API_URL ??
-  'http://localhost/wp-json/la/v1'
+import { WORDPRESS_API_URL } from '@/lib/constants'
+
+// WORDPRESS_INTERNAL_URL permite llamadas internas en Docker (sin pasar por Traefik).
+const WORDPRESS_API = process.env.WORDPRESS_INTERNAL_URL ?? WORDPRESS_API_URL
 
 export async function GET(request: NextRequest) {
   const limit = request.nextUrl.searchParams.get('limit') ?? '6'

@@ -1,8 +1,39 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { Trophy, Star, MapPin, User } from "lucide-react"
+import { Trophy, MapPin, User } from "lucide-react"
 import { Card } from "@/components/ui/card"
+
+interface Ganador {
+  id: number
+  nombre: string
+  foto_url: string
+  premio: string
+  ciudad: string
+  fecha: string
+  is_grand_prize: number
+}
+
+const WP_ROOT = (process.env.NEXT_PUBLIC_WP_URL ?? "").replace(/\/$/, "")
+
+function resolvePhotoUrl(raw: string): string {
+  if (!raw) return ""
+  // Si llega absoluta, extraer solo el path desde /wp-content en adelante.
+  // Elimina cualquier prefijo de dominio o segmento /wp-json/... que haya
+  // podido colarse desde el backend.
+  let path = raw
+  try {
+    const url = new URL(raw)
+    path = url.pathname
+  } catch {
+    // raw ya es relativa — úsala tal cual
+  }
+  // Limpiar fragmentos residuales como /wp-json/la/v1
+  path = path.replace(/\/wp-json\/[^/]+\/[^/]+/g, "")
+  if (!path.startsWith("/")) path = "/" + path
+  return WP_ROOT + path
+}
 
 function formatFecha(fechaStr: string): string {
   if (!fechaStr) return ""
@@ -12,6 +43,17 @@ function formatFecha(fechaStr: string): string {
 }
 
 export function WinnersSection() {
+  const [ganadores, setGanadores] = useState<Ganador[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/ganadores?limit=3")
+      .then((r) => r.json())
+      .then((data: unknown) => setGanadores(Array.isArray(data) ? data : []))
+      .catch(() => setGanadores([]))
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <section
       id="ganadores"
@@ -44,23 +86,104 @@ export function WinnersSection() {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center gap-5 py-16 px-4 text-center"
-        >
-          <div className="w-20 h-20 rounded-full bg-[#009640]/10 flex items-center justify-center">
-            <Trophy className="w-9 h-9 text-[#009640]/60" />
+        {/* ── Estado de carga ── */}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-64 rounded-2xl bg-[#2B2B2B]/5 dark:bg-white/5 animate-pulse"
+              />
+            ))}
           </div>
-          <h3 className="text-2xl font-bold text-[#2B2B2B] dark:text-white uppercase font-[var(--font-gunterz)]">
-            ¡El podio está esperando!
-          </h3>
-          <p className="text-[#2B2B2B]/60 text-lg max-w-md">
-            Aún no hay ganadores registrados. Jugá hoy y sé el primero en aparecer aquí.
-          </p>
-        </motion.div>
+        )}
+
+        {/* ── Sin ganadores ── */}
+        {!loading && ganadores.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-5 py-16 px-4 text-center"
+          >
+            <div className="w-20 h-20 rounded-full bg-[#009640]/10 flex items-center justify-center">
+              <Trophy className="w-9 h-9 text-[#009640]/60" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#2B2B2B] dark:text-white uppercase font-[var(--font-gunterz)]">
+              ¡El podio está esperando!
+            </h3>
+            <p className="text-[#2B2B2B]/60 text-lg max-w-md">
+              Aún no hay ganadores registrados. Jugá hoy y sé el primero en aparecer aquí.
+            </p>
+          </motion.div>
+        )}
+
+        {/* ── Grilla de ganadores ── */}
+        {!loading && ganadores.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ganadores.map((ganador, index) => (
+              <motion.div
+                key={ganador.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="relative overflow-hidden rounded-2xl border border-[#009640]/20
+                                 bg-white dark:bg-[#243347] shadow-md hover:shadow-lg
+                                 transition-shadow duration-300 p-6 flex flex-col items-center text-center gap-4">
+
+                  {ganador.is_grand_prize === 1 && (
+                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-0.5
+                                     rounded-full bg-[#FFCC00]/20 text-[#B8860B] dark:text-[#FFCC00]
+                                     text-xs font-bold uppercase tracking-wide border border-[#FFCC00]/40">
+                      Gran Premio
+                    </span>
+                  )}
+
+                  {/* Foto o avatar */}
+                  {ganador.foto_url ? (
+                    <img
+                      src={resolvePhotoUrl(ganador.foto_url)}
+                      alt={ganador.nombre}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-[#009640]/30 shadow"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-[#009640]/10 flex items-center justify-center border-4 border-[#009640]/20">
+                      <User className="w-10 h-10 text-[#009640]/50" />
+                    </div>
+                  )}
+
+                  {/* Nombre */}
+                  <h3 className="text-lg font-bold text-[#2B2B2B] dark:text-white uppercase
+                                 tracking-tight font-[var(--font-gunterz)] leading-tight">
+                    {ganador.nombre}
+                  </h3>
+
+                  {/* Premio */}
+                  <p className="text-2xl font-black text-[#009640]">
+                    {ganador.premio}
+                  </p>
+
+                  {/* Ciudad y fecha */}
+                  <div className="flex flex-col items-center gap-1 text-sm text-[#2B2B2B]/60 dark:text-white/50">
+                    {ganador.ciudad && (
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin size={13} />
+                        {ganador.ciudad}
+                      </span>
+                    )}
+                    {ganador.fecha && (
+                      <span>{formatFecha(ganador.fecha)}</span>
+                    )}
+                  </div>
+
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

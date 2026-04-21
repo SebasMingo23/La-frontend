@@ -77,10 +77,9 @@ const item = {
 }
 
 export function PredictionsSection() {
-  const sectionRef = useRef(null)
+  const sectionRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
+    layoutEffect: false,
   })
   
   const parallaxY1 = useTransform(scrollYProgress, [0, 1], [50, -50])
@@ -91,6 +90,7 @@ export function PredictionsSection() {
       ref={sectionRef}
       id="predicciones"
       className="relative py-20 md:py-32 overflow-hidden bg-[#009640] dark:bg-[#009640] transition-colors duration-300"
+      style={{ position: 'relative' }}
     >
       {/* Decorative Top Bar */}
       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-accent to-primary" />
