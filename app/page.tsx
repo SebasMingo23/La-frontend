@@ -19,8 +19,8 @@ export default async function Home() {
     <ScrollBackground>
       <Header />
       <HeroSection />
-      <WinnersSection />
       <BannersSlider />
+      <WinnersSection />
       <PalpitesSection />
       <PredictionsSection />
       <DreamsSearchClient entries={dreamEntries} />

@@ -230,7 +230,7 @@ export function Header() {
                          hover:shadow-[0_8px_24px_rgba(0,150,64,0.55)] hover:scale-105
                          transition-all duration-300 cursor-pointer"
             >
-              Login
+              Juega aquí
             </a>
           </div>
 
@@ -335,7 +335,7 @@ export function Header() {
                              text-white shadow-[0_4px_16px_rgba(0,150,64,0.4)]
                              transition-all duration-300 cursor-pointer"
                 >
-                  Login
+                  Juega aquí
                 </a>
               </div>
             </nav>
