@@ -5,6 +5,7 @@ import { Zap, Clock, Play, X, Radio, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRef, useState, useEffect, useCallback } from "react"
 import type { Resultado } from "@/lib/types"
+import { normalizeAnimalName } from "@/lib/animals"
 import { useTheme } from "next-themes"
 
 // ─── Modal Sorteo en Vivo ─────────────────────────────────────────────────────
@@ -112,9 +113,10 @@ function AnimatedNumber({ target, onComplete }: { target: number; onComplete?: (
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-// API name → local filename slug when they differ
+// API slug → local filename slug when they differ
 const ANIMAL_SLUG_OVERRIDE: Record<string, string> = {
-  venado: "ciervo",
+  venado: "ciervo",   // safety net for raw API value
+  vibora: "cobra",    // Víbora (normalized display name) → cobra file
 }
 
 function getAnimalImageSrc(name: string): string {
@@ -140,6 +142,8 @@ function formatFechaHumana(fechaStr: string): string {
 interface HeroClientProps { resultado: Resultado }
 
 export function HeroClient({ resultado }: HeroClientProps) {
+  const animalName = normalizeAnimalName(resultado.animal ?? "")
+
   const [numberDone, setNumberDone]  = useState(false)
   const handleNumberComplete         = useCallback(() => setNumberDone(true), [])
   const [isLiveModalOpen, setIsLive] = useState(false)
@@ -325,7 +329,7 @@ export function HeroClient({ resultado }: HeroClientProps) {
                           animate={{ scale: [1, 1.22, 1], opacity: [0.45, 1, 0.45] }}
                           transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
                         />
-                        {resultado.animal && (
+                        {animalName && (
                           <motion.div
                             animate={{ y: [0, -8, 0] }}
                             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -333,15 +337,15 @@ export function HeroClient({ resultado }: HeroClientProps) {
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={getAnimalImageSrc(resultado.animal)}
-                              alt={resultado.animal}
+                              src={getAnimalImageSrc(animalName)}
+                              alt={animalName}
                               className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(0,235,100,0.45)]"
                             />
                           </motion.div>
                         )}
                       </div>
                       <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight font-[var(--font-gunterz)] text-white">
-                        {resultado.animal}
+                        {animalName}
                       </h2>
                       <div
                         className={`inline-flex items-center px-10 py-5 rounded-[1.25rem] bg-[#009640] text-white
@@ -496,7 +500,7 @@ export function HeroClient({ resultado }: HeroClientProps) {
                           animate={{ scale: [1, 1.22, 1], opacity: [0.45, 1, 0.45] }}
                           transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
                         />
-                        {resultado.animal && (
+                        {animalName && (
                           <motion.div
                             animate={{ y: [0, -8, 0] }}
                             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -504,8 +508,8 @@ export function HeroClient({ resultado }: HeroClientProps) {
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={getAnimalImageSrc(resultado.animal)}
-                              alt={resultado.animal}
+                              src={getAnimalImageSrc(animalName)}
+                              alt={animalName}
                               className="block dark:hidden w-full h-full object-contain"
                               style={{ filter: "invert(1) drop-shadow(0 0 15px rgba(255,204,0,0.8))" }}
                             />
@@ -516,7 +520,7 @@ export function HeroClient({ resultado }: HeroClientProps) {
                       {/* Nombre */}
                       <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight
                                      font-[var(--font-gunterz)] text-[#2B2B2B]">
-                        {resultado.animal}
+                        {animalName}
                       </h2>
 
                       {/* Número ganador — protagonista */}

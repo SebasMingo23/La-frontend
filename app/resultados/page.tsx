@@ -7,6 +7,7 @@ import { WhatsAppButton } from "@/components/whatsapp-button"
 import { ResultadosFiltros } from "@/components/resultados-filtros"
 import { getResultados } from "@/lib/api"
 import type { Resultado } from "@/lib/types"
+import { normalizeAnimalName } from "@/lib/animals"
 
 // ── Metadatos dinámicos — OG varía según el último animal sorteado ────────────
 
@@ -21,7 +22,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
     const resultados = await getResultados(1, fecha, turno)
     if (resultados.length > 0) {
       const r = resultados[0]
-      const title = `${r.animal} Nº${r.numero} — Resultado ${r.fecha}`
+      const animalDisplay = normalizeAnimalName(r.animal)
+      const title = `${animalDisplay} — Resultado ${r.fecha}`
       const description = [
         `Sorteo del ${r.fecha}`,
         r.turno ? `Turno ${r.turno}` : null,
@@ -35,7 +37,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
           title,
           description,
           images: (r.infographic_url || r.imagen_url)
-            ? [{ url: r.infographic_url || r.imagen_url, alt: r.animal }]
+            ? [{ url: r.infographic_url || r.imagen_url, alt: animalDisplay }]
             : undefined,
         },
         twitter: {
@@ -80,6 +82,7 @@ function formatFechaLarga(fechaStr: string): string {
 
 function HeroResultado({ resultado }: { resultado: Resultado }) {
   const hasInfographic = !!resultado.infographic_url
+  const animalDisplay  = normalizeAnimalName(resultado.animal)
 
   return (
     <div className="relative rounded-[2.5rem] overflow-hidden bg-card border border-primary/30
@@ -111,18 +114,20 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
 
         {hasInfographic ? (
           <>
-            {/* Infografía completa — banner con los 5 premios, altura acotada */}
-            <div className="w-full rounded-[1.5rem] overflow-hidden border border-primary/20
-                            shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={resultado.infographic_url!}
-                alt={`Infografía de premios — sorteo del ${resultado.fecha}`}
-                className="w-full max-h-[360px] md:max-h-[440px] object-contain"
-              />
+            {/* Infografía — centrada, ancho natural, sin whitespace lateral */}
+            <div className="flex justify-center">
+              <div className="rounded-[1.5rem] overflow-hidden border border-primary/20
+                              shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={resultado.infographic_url!}
+                  alt={`Infografía de premios — sorteo del ${resultado.fecha}`}
+                  className="block max-w-full max-h-[360px] md:max-h-[440px] w-auto h-auto"
+                />
+              </div>
             </div>
 
-            {/* Strip inferior: 1er Premio — sin número */}
+            {/* Strip inferior: 1er Premio */}
             <div className="flex flex-wrap items-center justify-between gap-4
                             pt-4 border-t border-border/50">
               <div>
@@ -131,7 +136,7 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
                 </p>
                 <p className="font-[family-name:var(--font-gunterz)] text-3xl md:text-4xl
                                text-foreground uppercase tracking-tight">
-                  {resultado.animal}
+                  {animalDisplay}
                 </p>
               </div>
               <p className="text-muted-foreground text-sm">
@@ -140,11 +145,11 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
             </div>
           </>
         ) : (
-          /* Fallback sin infografía: nombre del animal + datos (sin número) */
+          /* Fallback sin infografía: nombre del animal + datos */
           <div className="flex flex-col gap-4 text-center md:text-left">
             <h2 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
                            text-foreground uppercase tracking-tight leading-tight">
-              {resultado.animal}
+              {animalDisplay}
             </h2>
             <p className="text-muted-foreground text-lg mb-2">
               {formatFechaLarga(resultado.fecha)}
@@ -152,7 +157,7 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
               <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
                 <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Animal</p>
-                <p className="text-foreground font-bold text-lg">{resultado.animal}</p>
+                <p className="text-foreground font-bold text-lg">{animalDisplay}</p>
               </div>
               <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
                 <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Fecha</p>
@@ -184,7 +189,7 @@ function FilaResultado({ resultado, index }: { resultado: Resultado; index: numb
       {/* Animal + meta */}
       <div className="flex-1 min-w-0">
         <p className="font-bold text-foreground group-hover:text-primary transition-colors truncate">
-          {resultado.animal}
+          {normalizeAnimalName(resultado.animal)}
         </p>
         <p className="text-xs text-muted-foreground">
           {formatFechaLarga(resultado.fecha)}

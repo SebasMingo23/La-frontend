@@ -10,7 +10,7 @@ export const animals = [
   { id: 6,  name: "Cabra",      number: "06", image: "/images/animales/dorados/cabra-iconos-animales-dorado.png" },
   { id: 7,  name: "Oveja",      number: "07", image: "/images/animales/dorados/oveja-iconos-animales-dorado.png" },
   { id: 8,  name: "Camello",    number: "08", image: "/images/animales/dorados/camello-iconos-animales-dorado.png" },
-  { id: 9,  name: "Cobra",      number: "09", image: "/images/animales/dorados/cobra-iconos-animales-dorado.png" },
+  { id: 9,  name: "Víbora",     number: "09", image: "/images/animales/dorados/cobra-iconos-animales-dorado.png" },
   { id: 10, name: "Conejo",     number: "10", image: "/images/animales/dorados/conejo-iconos-animales-dorado.png" },
   { id: 11, name: "Caballo",    number: "11", image: "/images/animales/dorados/caballo-iconos-animales-dorado.png" },
   { id: 12, name: "Elefante",   number: "12", image: "/images/animales/dorados/elefante-iconos-animales-dorado.png" },
@@ -25,8 +25,18 @@ export const animals = [
   { id: 21, name: "Toro",       number: "21", image: "/images/animales/dorados/toro-iconos-animales-dorado.png" },
   { id: 22, name: "Tigre",      number: "22", image: "/images/animales/dorados/tigre-iconos-animales-dorado.png" },
   { id: 23, name: "Oso",        number: "23", image: "/images/animales/dorados/oso-iconos-animales-dorado.png" },
-  { id: 24, name: "Venado",     number: "24", image: "/images/animales/dorados/ciervo-iconos-animales-dorado.png" },
+  { id: 24, name: "Ciervo",     number: "24", image: "/images/animales/dorados/ciervo-iconos-animales-dorado.png" },
   { id: 25, name: "Vaca",       number: "25", image: "/images/animales/dorados/vaca-iconos-animales-dorado.png" },
 ] as const
 
 export type Animal = typeof animals[number]
+
+// Maps raw API animal names → official display names when they diverge from the DB
+const DISPLAY_NAME_MAP: Record<string, string> = {
+  "Venado": "Ciervo",
+  "Cobra":  "Víbora",
+}
+
+export function normalizeAnimalName(name: string): string {
+  return DISPLAY_NAME_MAP[name] ?? name
+}

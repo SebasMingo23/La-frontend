@@ -39,12 +39,13 @@ export function MapaLocales({ locales, onSelectLocal }: Props) {
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
+    let cancelled = false
 
     // Asunción, Paraguay — centro por defecto
     const ASUNCION: [number, number] = [-25.2867, -57.647]
 
     import("leaflet").then((L) => {
-      if (!containerRef.current || mapRef.current) return
+      if (cancelled || !containerRef.current || mapRef.current) return
 
       // Clear stale Leaflet internal state (React StrictMode runs effects twice)
       const container = containerRef.current as HTMLDivElement & { _leaflet_id?: number }
@@ -113,6 +114,7 @@ export function MapaLocales({ locales, onSelectLocal }: Props) {
     })
 
     return () => {
+      cancelled = true
       if (mapRef.current) {
         mapRef.current.remove()
         mapRef.current = null

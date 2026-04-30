@@ -42,15 +42,17 @@ export function MapaInteractivo({ locales, selectedId, onSelectLocal }: Props) {
   const mapRef        = useRef<any>(null)
   const markersRef    = useRef<Record<number, any>>({})
   const LRef          = useRef<any>(null)
+  const flyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Permite que el efecto de selectedId actúe incluso antes de que Leaflet termine de inicializar
   const pendingIdRef  = useRef<number | null>(selectedId)
 
   // ─── Inicialización del mapa ───────────────────────────────────
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
+    let cancelled = false
 
     import("leaflet").then((L) => {
-      if (!containerRef.current || mapRef.current) return
+      if (cancelled || !containerRef.current || mapRef.current) return
       LRef.current = L
 
       // Clear stale Leaflet internal state (React StrictMode runs effects twice)
@@ -148,6 +150,8 @@ export function MapaInteractivo({ locales, selectedId, onSelectLocal }: Props) {
     })
 
     return () => {
+      cancelled = true
+      if (flyTimeoutRef.current) clearTimeout(flyTimeoutRef.current)
       if (mapRef.current) {
         mapRef.current.remove()
         mapRef.current = null
@@ -189,7 +193,8 @@ export function MapaInteractivo({ locales, selectedId, onSelectLocal }: Props) {
     if (isNaN(lat) || isNaN(lng)) return
 
     mapRef.current.flyTo([lat, lng], 16, { animate: true, duration: 1.2 })
-    setTimeout(() => marker.openPopup(), 1100)
+    if (flyTimeoutRef.current) clearTimeout(flyTimeoutRef.current)
+    flyTimeoutRef.current = setTimeout(() => marker.openPopup(), 1100)
   }
 
   return (
