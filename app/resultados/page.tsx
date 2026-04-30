@@ -91,61 +91,73 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
       <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col gap-6 p-8 md:p-10">
-
-        {/* Badge row — siempre visible */}
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary
-                           text-xs font-semibold uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Último Resultado
-          </span>
-          {resultado.turno && (
-            <span className="px-3 py-1 rounded-full bg-background/50 border border-border
-                             text-muted-foreground text-xs font-medium">
-              {resultado.turno}
+      {hasInfographic ? (
+        <>
+          {/* Badge row — solo "Último Resultado", sin fecha ni turno */}
+          <div className="relative z-10 px-8 md:px-10 pt-8 md:pt-10 pb-5 flex items-center">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary
+                             text-xs font-semibold uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Último Resultado
             </span>
-          )}
-          <span className="px-3 py-1 rounded-full bg-background/50 border border-border
-                           text-muted-foreground text-xs font-medium ml-auto">
-            {formatFecha(resultado.fecha)}
-          </span>
-        </div>
+          </div>
 
-        {hasInfographic ? (
-          <>
-            {/* Infografía — centrada, ancho natural, sin whitespace lateral */}
-            <div className="flex justify-center">
-              <div className="rounded-[1.5rem] overflow-hidden border border-primary/20
-                              shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={resultado.infographic_url!}
-                  alt={`Infografía de premios — sorteo del ${resultado.fecha}`}
-                  className="block max-w-full max-h-[360px] md:max-h-[440px] w-auto h-auto"
-                />
-              </div>
-            </div>
+          {/* Infografía — edge-to-edge, sin padding lateral */}
+          <div className="relative z-10 w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={resultado.infographic_url!}
+              alt={`Infografía de premios — sorteo del ${resultado.fecha}`}
+              className="w-full h-auto block"
+            />
+          </div>
 
-            {/* Strip inferior: 1er Premio */}
-            <div className="flex flex-wrap items-center justify-between gap-4
-                            pt-4 border-t border-border/50">
-              <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-                  1er Premio
-                </p>
+          {/* Strip inferior: animal + turno + fecha */}
+          <div className="relative z-10 px-8 md:px-10 py-6 flex flex-wrap items-center justify-between gap-4
+                          border-t border-border/50">
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
+                1er Premio
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
                 <p className="font-[family-name:var(--font-gunterz)] text-3xl md:text-4xl
                                text-foreground uppercase tracking-tight">
                   {animalDisplay}
                 </p>
+                {resultado.turno && (
+                  <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20
+                                   text-primary text-xs font-semibold uppercase tracking-wide">
+                    {resultado.turno}
+                  </span>
+                )}
               </div>
-              <p className="text-muted-foreground text-sm">
-                {formatFechaLarga(resultado.fecha)}
-              </p>
             </div>
-          </>
-        ) : (
-          /* Fallback sin infografía: nombre del animal + datos */
+            <p className="text-muted-foreground text-sm">
+              {formatFechaLarga(resultado.fecha)}
+            </p>
+          </div>
+        </>
+      ) : (
+        /* Fallback sin infografía: badge con fecha+turno + nombre del animal + datos */
+        <div className="relative z-10 flex flex-col gap-6 p-8 md:p-10">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary
+                             text-xs font-semibold uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Último Resultado
+            </span>
+            {resultado.turno && (
+              <span className="px-3 py-1 rounded-full bg-background/50 border border-border
+                               text-muted-foreground text-xs font-medium">
+                {resultado.turno}
+              </span>
+            )}
+            <span className="px-3 py-1 rounded-full bg-background/50 border border-border
+                             text-muted-foreground text-xs font-medium ml-auto">
+              {formatFecha(resultado.fecha)}
+            </span>
+          </div>
+
           <div className="flex flex-col gap-4 text-center md:text-left">
             <h2 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
                            text-foreground uppercase tracking-tight leading-tight">
@@ -171,8 +183,8 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
               )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
