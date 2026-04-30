@@ -9,11 +9,18 @@ import { LocationsSection } from "@/components/locations-section"
 import { HowToPlaySection } from "@/components/how-to-play-section"
 import { Footer } from "@/components/footer"
 import { WhatsAppButton } from "@/components/whatsapp-button"
-import { getDreamsDictionary } from "@/lib/api"
+import { getDreamsDictionary, getUltimoResultado } from "@/lib/api"
 import { ScrollBackground } from "@/components/scroll-background"
 
 export default async function Home() {
-  const dreamEntries = await getDreamsDictionary().catch(() => [])
+  const [dreamEntries, ultimoResultado] = await Promise.all([
+    getDreamsDictionary().catch(() => []),
+    getUltimoResultado().catch(() => null),
+  ])
+
+  const winnerAnimalId = ultimoResultado?.animal_id != null
+    ? Number(ultimoResultado.animal_id)
+    : null
 
   return (
     <ScrollBackground>
@@ -23,7 +30,7 @@ export default async function Home() {
       <WinnersSection />
       <PalpitesSection />
       <PredictionsSection />
-      <DreamsSearchClient entries={dreamEntries} />
+      <DreamsSearchClient entries={dreamEntries} winnerAnimalId={winnerAnimalId} />
       <LocationsSection />
       <HowToPlaySection />
       <Footer />

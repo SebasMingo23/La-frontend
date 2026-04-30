@@ -5,6 +5,7 @@ export interface UltimoResultado {
   animal_id: number | null;
   number: string;
   image_url: string;
+  infographic_url?: string;
   description: string;
 }
 
@@ -48,6 +49,7 @@ export interface Resultado {
   fecha: string;       // "YYYY-MM-DD"
   turno: string;       // "Mañana" | "Tarde" | "Noche" | "Nocturna"
   imagen_url: string;
+  infographic_url?: string;
   descripcion: string;
 }
 

@@ -34,15 +34,17 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
         openGraph: {
           title,
           description,
-          images: r.imagen_url
-            ? [{ url: r.imagen_url, width: 400, height: 400, alt: r.animal }]
+          images: (r.infographic_url || r.imagen_url)
+            ? [{ url: r.infographic_url || r.imagen_url, alt: r.animal }]
             : undefined,
         },
         twitter: {
           card: 'summary_large_image',
           title,
           description,
-          images: r.imagen_url ? [r.imagen_url] : undefined,
+          images: (r.infographic_url || r.imagen_url)
+            ? [r.infographic_url || r.imagen_url]
+            : undefined,
         },
       }
     }
@@ -77,82 +79,111 @@ function formatFechaLarga(fechaStr: string): string {
 // ── Sub-componentes ───────────────────────────────────────────────────────────
 
 function HeroResultado({ resultado }: { resultado: Resultado }) {
+  const hasInfographic = !!resultado.infographic_url
+
   return (
     <div className="relative rounded-[2.5rem] overflow-hidden bg-card border border-primary/30
-                    shadow-[0_0_60px_rgba(255,122,0,0.15)] p-8 md:p-12">
+                    shadow-[0_0_60px_rgba(255,122,0,0.15)]">
       {/* Glow de fondo */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
       <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start">
+      <div className="relative z-10 flex flex-col gap-6 p-8 md:p-10">
 
-        {/* Número / imagen */}
-        <div className="flex-shrink-0 flex flex-col items-center gap-3">
-          {resultado.imagen_url ? (
-            <div className="w-36 h-36 md:w-44 md:h-44 rounded-[1.5rem] overflow-hidden border-2 border-primary/40
-                            shadow-[0_0_40px_rgba(255,122,0,0.3)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={resultado.imagen_url}
-                alt={resultado.animal}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <div className="w-36 h-36 md:w-44 md:h-44 rounded-[1.5rem] bg-primary/10 border-2 border-primary/30
-                            flex items-center justify-center shadow-[0_0_40px_rgba(255,122,0,0.2)]">
-              <span className="text-6xl md:text-7xl font-bold text-primary font-[family-name:var(--font-gunterz)]">
-                {resultado.numero}
-              </span>
-            </div>
-          )}
-          {resultado.imagen_url && (
-            <span className="text-4xl font-bold text-primary font-[family-name:var(--font-gunterz)]">
-              #{resultado.numero}
-            </span>
-          )}
-        </div>
-
-        {/* Texto */}
-        <div className="flex-1 flex flex-col gap-4 text-center md:text-left">
-          <span className="inline-flex self-center md:self-start items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary
+        {/* Badge row — siempre visible */}
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary
                            text-xs font-semibold uppercase tracking-widest">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             Último Resultado
           </span>
+          {resultado.turno && (
+            <span className="px-3 py-1 rounded-full bg-background/50 border border-border
+                             text-muted-foreground text-xs font-medium">
+              {resultado.turno}
+            </span>
+          )}
+          <span className="px-3 py-1 rounded-full bg-background/50 border border-border
+                           text-muted-foreground text-xs font-medium ml-auto">
+            {formatFecha(resultado.fecha)}
+          </span>
+        </div>
 
-          <h2 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
-                         text-foreground uppercase tracking-tight leading-tight">
-            {resultado.animal}
-          </h2>
-
-          <p className="text-muted-foreground text-lg mb-6">
-            {formatFechaLarga(resultado.fecha)}
-          </p>
-
-          <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Animal</p>
-              <p className="text-foreground font-bold text-lg">{resultado.animal}</p>
+        {hasInfographic ? (
+          <>
+            {/* Infografía completa — banner con los 5 premios */}
+            <div className="w-full rounded-[1.5rem] overflow-hidden border border-primary/20
+                            shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resultado.infographic_url!}
+                alt={`Infografía de premios — sorteo del ${resultado.fecha}`}
+                className="w-full h-auto"
+              />
             </div>
-            <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Número</p>
-              <p className="text-primary font-bold text-2xl font-[family-name:var(--font-gunterz)]">
-                {resultado.numero}
+
+            {/* Strip inferior: 1er Premio */}
+            <div className="flex flex-wrap items-center justify-between gap-4
+                            pt-4 border-t border-border/50">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
+                  1er Premio
+                </p>
+                <p className="font-[family-name:var(--font-gunterz)] text-3xl md:text-4xl
+                               text-foreground uppercase tracking-tight">
+                  {resultado.animal}
+                  <span className="text-primary ml-3">#{resultado.numero}</span>
+                </p>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {formatFechaLarga(resultado.fecha)}
               </p>
             </div>
-            <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Fecha</p>
-              <p className="text-foreground font-bold text-lg">{formatFecha(resultado.fecha)}</p>
-            </div>
-            {resultado.turno && (
-              <div className="bg-primary/10 border border-primary/30 rounded-2xl px-5 py-3 text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Turno</p>
-                <p className="text-primary font-bold text-lg">{resultado.turno}</p>
+          </>
+        ) : (
+          /* Fallback sin infografía: layout original con número y datos */
+          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+            <div className="flex-shrink-0">
+              <div className="w-36 h-36 md:w-44 md:h-44 rounded-[1.5rem] bg-primary/10 border-2 border-primary/30
+                              flex items-center justify-center shadow-[0_0_40px_rgba(255,122,0,0.2)]">
+                <span className="text-6xl md:text-7xl font-bold text-primary font-[family-name:var(--font-gunterz)]">
+                  {resultado.numero}
+                </span>
               </div>
-            )}
+            </div>
+            <div className="flex-1 flex flex-col gap-4 text-center md:text-left">
+              <h2 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
+                             text-foreground uppercase tracking-tight leading-tight">
+                {resultado.animal}
+              </h2>
+              <p className="text-muted-foreground text-lg mb-2">
+                {formatFechaLarga(resultado.fecha)}
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Animal</p>
+                  <p className="text-foreground font-bold text-lg">{resultado.animal}</p>
+                </div>
+                <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Número</p>
+                  <p className="text-primary font-bold text-2xl font-[family-name:var(--font-gunterz)]">
+                    {resultado.numero}
+                  </p>
+                </div>
+                <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Fecha</p>
+                  <p className="text-foreground font-bold text-lg">{formatFecha(resultado.fecha)}</p>
+                </div>
+                {resultado.turno && (
+                  <div className="bg-primary/10 border border-primary/30 rounded-2xl px-5 py-3 text-center">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Turno</p>
+                    <p className="text-primary font-bold text-lg">{resultado.turno}</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
@@ -167,23 +198,15 @@ function FilaResultado({ resultado, index }: { resultado: Resultado; index: numb
         {index + 1}
       </span>
 
-      {/* Imagen o número */}
-      {resultado.imagen_url ? (
-        <div className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden border border-border">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={resultado.imagen_url} alt={resultado.animal}
-               className="w-full h-full object-cover" />
-        </div>
-      ) : (
-        <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20
-                        flex items-center justify-center">
-          <span className="text-primary font-bold text-lg font-[family-name:var(--font-gunterz)]">
-            {resultado.numero}
-          </span>
-        </div>
-      )}
+      {/* Número badge */}
+      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20
+                      flex items-center justify-center">
+        <span className="text-primary font-bold text-lg font-[family-name:var(--font-gunterz)]">
+          {resultado.numero}
+        </span>
+      </div>
 
-      {/* Animal */}
+      {/* Animal + meta */}
       <div className="flex-1 min-w-0">
         <p className="font-bold text-foreground group-hover:text-primary transition-colors truncate">
           {resultado.animal}
@@ -193,10 +216,18 @@ function FilaResultado({ resultado, index }: { resultado: Resultado; index: numb
           {resultado.turno && (
             <> · <span className="text-primary/70">{resultado.turno}</span></>
           )}
+          {resultado.infographic_url && (
+            <> · <a
+              href={resultado.infographic_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary/60 hover:text-primary transition-colors underline underline-offset-2"
+            >ver infografía</a></>
+          )}
         </p>
       </div>
 
-      {/* Número badge */}
+      {/* Número pill */}
       <span className="flex-shrink-0 px-3 py-1 rounded-full bg-primary/10 text-primary
                        text-sm font-bold font-[family-name:var(--font-gunterz)]">
         #{resultado.numero}

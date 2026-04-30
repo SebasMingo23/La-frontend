@@ -233,14 +233,10 @@ function OracleParticles() {
   )
 }
 
-// ID del último animal ganador — badge "★ HOY" permanente en la grilla
-const WINNER_ANIMAL_ID = 2 // Águila #02
-
 /** Card de animal del catálogo — reacciona al estado del Oráculo */
-function AnimalCard({ entry, state, index, isDark }: { entry: DreamEntry; state: CardState; index: number; isDark: boolean }) {
+function AnimalCard({ entry, state, index, isDark, isWinner }: { entry: DreamEntry; state: CardState; index: number; isDark: boolean; isWinner: boolean }) {
   // Siempre íconos blancos — fondo oscuro en ambos modos
   const imageSrc = blancosMap[entry.id] ?? resolveImage(entry)
-  const isWinner = entry.id === WINNER_ANIMAL_ID
 
   // Estilos de borde y fondo por estado — bifurcados por tema
   const containerClass = (() => {
@@ -366,9 +362,10 @@ function AnimalCard({ entry, state, index, isDark }: { entry: DreamEntry; state:
 
 interface DreamsSearchClientProps {
   entries: DreamEntry[]
+  winnerAnimalId?: number | null
 }
 
-export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
+export function DreamsSearchClient({ entries, winnerAnimalId = null }: DreamsSearchClientProps) {
   const [query,   setQuery]   = useState("")
   const [loading, setLoading] = useState(false)
   const [result,  setResult]  = useState<InterpretResult | null>(null)
@@ -635,6 +632,7 @@ export function DreamsSearchClient({ entries }: DreamsSearchClientProps) {
               <AnimalCard
                 entry={entry}
                 state={getCardState(entry)}
+                isWinner={winnerAnimalId != null && entry.id === winnerAnimalId}
                 index={i}
                 isDark={isDark}
               />
