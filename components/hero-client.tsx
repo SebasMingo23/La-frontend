@@ -112,6 +112,20 @@ function AnimatedNumber({ target, onComplete }: { target: number; onComplete?: (
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// API name → local filename slug when they differ
+const ANIMAL_SLUG_OVERRIDE: Record<string, string> = {
+  venado: "ciervo",
+}
+
+function getAnimalImageSrc(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/ /g, "-")
+  return "/images/animales/blancos/" + (ANIMAL_SLUG_OVERRIDE[slug] ?? slug) + "-iconos-animales-blanco.png"
+}
+
 function formatFechaHumana(fechaStr: string): string {
   if (!fechaStr) return ""
   const meses = ["enero","febrero","marzo","abril","mayo","junio",
@@ -319,15 +333,7 @@ export function HeroClient({ resultado }: HeroClientProps) {
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={
-                                "/images/animales/blancos/" +
-                                resultado.animal
-                                  .toLowerCase()
-                                  .normalize("NFD")
-                                  .replace(/[\u0300-\u036f]/g, "")
-                                  .replace(/ /g, "-") +
-                                "-iconos-animales-blanco.png"
-                              }
+                              src={getAnimalImageSrc(resultado.animal)}
                               alt={resultado.animal}
                               className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(0,235,100,0.45)]"
                             />
@@ -498,15 +504,7 @@ export function HeroClient({ resultado }: HeroClientProps) {
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={
-                                "/images/animales/blancos/" +
-                                resultado.animal
-                                  .toLowerCase()
-                                  .normalize("NFD")
-                                  .replace(/[\u0300-\u036f]/g, "")
-                                  .replace(/ /g, "-") +
-                                "-iconos-animales-blanco.png"
-                              }
+                              src={getAnimalImageSrc(resultado.animal)}
                               alt={resultado.animal}
                               className="block dark:hidden w-full h-full object-contain"
                               style={{ filter: "invert(1) drop-shadow(0 0 15px rgba(255,204,0,0.8))" }}

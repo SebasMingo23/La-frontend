@@ -111,18 +111,18 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
 
         {hasInfographic ? (
           <>
-            {/* Infografía completa — banner con los 5 premios */}
+            {/* Infografía completa — banner con los 5 premios, altura acotada */}
             <div className="w-full rounded-[1.5rem] overflow-hidden border border-primary/20
                             shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resultado.infographic_url!}
                 alt={`Infografía de premios — sorteo del ${resultado.fecha}`}
-                className="w-full h-auto"
+                className="w-full max-h-[360px] md:max-h-[440px] object-contain"
               />
             </div>
 
-            {/* Strip inferior: 1er Premio */}
+            {/* Strip inferior: 1er Premio — sin número */}
             <div className="flex flex-wrap items-center justify-between gap-4
                             pt-4 border-t border-border/50">
               <div>
@@ -132,7 +132,6 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
                 <p className="font-[family-name:var(--font-gunterz)] text-3xl md:text-4xl
                                text-foreground uppercase tracking-tight">
                   {resultado.animal}
-                  <span className="text-primary ml-3">#{resultado.numero}</span>
                 </p>
               </div>
               <p className="text-muted-foreground text-sm">
@@ -141,46 +140,30 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
             </div>
           </>
         ) : (
-          /* Fallback sin infografía: layout original con número y datos */
-          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-            <div className="flex-shrink-0">
-              <div className="w-36 h-36 md:w-44 md:h-44 rounded-[1.5rem] bg-primary/10 border-2 border-primary/30
-                              flex items-center justify-center shadow-[0_0_40px_rgba(255,122,0,0.2)]">
-                <span className="text-6xl md:text-7xl font-bold text-primary font-[family-name:var(--font-gunterz)]">
-                  {resultado.numero}
-                </span>
+          /* Fallback sin infografía: nombre del animal + datos (sin número) */
+          <div className="flex flex-col gap-4 text-center md:text-left">
+            <h2 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
+                           text-foreground uppercase tracking-tight leading-tight">
+              {resultado.animal}
+            </h2>
+            <p className="text-muted-foreground text-lg mb-2">
+              {formatFechaLarga(resultado.fecha)}
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+              <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Animal</p>
+                <p className="text-foreground font-bold text-lg">{resultado.animal}</p>
               </div>
-            </div>
-            <div className="flex-1 flex flex-col gap-4 text-center md:text-left">
-              <h2 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
-                             text-foreground uppercase tracking-tight leading-tight">
-                {resultado.animal}
-              </h2>
-              <p className="text-muted-foreground text-lg mb-2">
-                {formatFechaLarga(resultado.fecha)}
-              </p>
-              <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Animal</p>
-                  <p className="text-foreground font-bold text-lg">{resultado.animal}</p>
-                </div>
-                <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Número</p>
-                  <p className="text-primary font-bold text-2xl font-[family-name:var(--font-gunterz)]">
-                    {resultado.numero}
-                  </p>
-                </div>
-                <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Fecha</p>
-                  <p className="text-foreground font-bold text-lg">{formatFecha(resultado.fecha)}</p>
-                </div>
-                {resultado.turno && (
-                  <div className="bg-primary/10 border border-primary/30 rounded-2xl px-5 py-3 text-center">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Turno</p>
-                    <p className="text-primary font-bold text-lg">{resultado.turno}</p>
-                  </div>
-                )}
+              <div className="bg-background/50 border border-border rounded-2xl px-5 py-3 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Fecha</p>
+                <p className="text-foreground font-bold text-lg">{formatFecha(resultado.fecha)}</p>
               </div>
+              {resultado.turno && (
+                <div className="bg-primary/10 border border-primary/30 rounded-2xl px-5 py-3 text-center">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Turno</p>
+                  <p className="text-primary font-bold text-lg">{resultado.turno}</p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -197,14 +180,6 @@ function FilaResultado({ resultado, index }: { resultado: Resultado; index: numb
       <span className="flex-shrink-0 w-8 text-center text-sm font-bold text-muted-foreground/50">
         {index + 1}
       </span>
-
-      {/* Número badge */}
-      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20
-                      flex items-center justify-center">
-        <span className="text-primary font-bold text-lg font-[family-name:var(--font-gunterz)]">
-          {resultado.numero}
-        </span>
-      </div>
 
       {/* Animal + meta */}
       <div className="flex-1 min-w-0">
@@ -226,12 +201,6 @@ function FilaResultado({ resultado, index }: { resultado: Resultado; index: numb
           )}
         </p>
       </div>
-
-      {/* Número pill */}
-      <span className="flex-shrink-0 px-3 py-1 rounded-full bg-primary/10 text-primary
-                       text-sm font-bold font-[family-name:var(--font-gunterz)]">
-        #{resultado.numero}
-      </span>
     </div>
   )
 }
