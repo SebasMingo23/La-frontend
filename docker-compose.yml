@@ -135,11 +135,11 @@ services:
       - "traefik.http.middlewares.cors-api.headers.customresponseheaders.Access-Control-Allow-Headers=Content-Type, Authorization, X-WP-Nonce"
 
       # ── STAGING ────────────────────────────────────────────────
-      - "traefik.http.routers.backend-staging-http.rule=Host(`api.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.backend-staging-http.rule=Host(`backoffice.187.77.251.126.nip.io`)"
       - "traefik.http.routers.backend-staging-http.entrypoints=web"
       - "traefik.http.routers.backend-staging-http.middlewares=redirect-to-https@docker"
 
-      - "traefik.http.routers.backend-staging-https.rule=Host(`api.187.77.251.126.nip.io`)"
+      - "traefik.http.routers.backend-staging-https.rule=Host(`backoffice.187.77.251.126.nip.io`)"
       - "traefik.http.routers.backend-staging-https.entrypoints=websecure"
       - "traefik.http.routers.backend-staging-https.tls=true"
       - "traefik.http.routers.backend-staging-https.tls.certresolver=letsencrypt"
