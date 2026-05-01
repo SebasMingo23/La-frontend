@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback } from "react"
 import { CalendarDays, X } from "lucide-react"
 
-const TURNOS = ["Mañana", "Tarde", "Noche", "Nocturna"] as const
+const TURNOS = ["Mañana", "Tarde", "Noche"] as const
 
 interface Props {
   /** true → clases adaptadas para fondo blanco (sidebar claro) */

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { WhatsAppButton } from "@/components/whatsapp-button"
+import { PageHero } from "@/components/page-hero"
 import { getPages } from "@/lib/api"
 import { sanitizeWpHtml } from "@/lib/sanitize"
 
@@ -25,32 +26,11 @@ export default async function JuegoResponsablePage() {
       <Header />
 
       <main className="min-h-screen bg-background">
-        {/* Barra de acento superior */}
-        <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary" />
-
-        {/* Hero de página */}
-        <div className="pt-24 pb-10 px-4 max-w-4xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-primary transition-colors">
-              Inicio
-            </Link>
-            <span>/</span>
-            <span className="text-foreground">Juego Responsable</span>
-          </nav>
-
-          {/* Título */}
-          <h1 className="font-[family-name:var(--font-gunterz)] text-4xl md:text-5xl lg:text-6xl text-foreground uppercase tracking-tight leading-none mb-4">
-            Juego{" "}
-            <span className="text-primary">Responsable</span>
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-xl">
-            Jugá con conciencia. El juego es solo para mayores de 18 años.
-          </p>
-
-          {/* Separador */}
-          <div className="mt-8 h-px w-full bg-gradient-to-r from-primary/40 via-border to-transparent" />
-        </div>
+        <PageHero
+          breadcrumb="Juego Responsable"
+          title={<>Juego{" "}<span className="text-primary">Responsable</span></>}
+          subtitle="Jugá con conciencia. El juego es solo para mayores de 18 años."
+        />
 
         {/* Contenido WordPress */}
         <div className="px-4 pb-24 max-w-4xl mx-auto">

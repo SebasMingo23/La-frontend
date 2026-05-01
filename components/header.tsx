@@ -228,6 +228,7 @@ export function Header() {
                          bg-gradient-to-r from-[#009640] to-[#00b84a]
                          text-white shadow-[0_4px_16px_rgba(0,150,64,0.4)]
                          hover:shadow-[0_8px_24px_rgba(0,150,64,0.55)] hover:scale-105
+                         dark:ring-1 dark:ring-white/40
                          transition-all duration-300 cursor-pointer"
             >
               Juega aquí
@@ -333,6 +334,7 @@ export function Header() {
                   className="w-full flex items-center justify-center px-4 py-3 rounded-xl font-black uppercase tracking-wide
                              bg-gradient-to-r from-[#009640] to-[#00b84a]
                              text-white shadow-[0_4px_16px_rgba(0,150,64,0.4)]
+                             dark:ring-1 dark:ring-white/40
                              transition-all duration-300 cursor-pointer"
                 >
                   Juega aquí

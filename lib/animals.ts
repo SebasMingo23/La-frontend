@@ -33,8 +33,9 @@ export type Animal = typeof animals[number]
 
 // Maps raw API animal names → official display names when they diverge from the DB
 const DISPLAY_NAME_MAP: Record<string, string> = {
-  "Venado": "Ciervo",
-  "Cobra":  "Víbora",
+  "Venado":    "Ciervo",
+  "Cobra":     "Víbora",
+  "Serpiente": "Víbora",
 }
 
 export function normalizeAnimalName(name: string): string {

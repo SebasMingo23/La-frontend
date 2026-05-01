@@ -47,7 +47,7 @@ export interface Resultado {
   animal: string;
   numero: string;      // "01" … "36"  (zero-padded)
   fecha: string;       // "YYYY-MM-DD"
-  turno: string;       // "Mañana" | "Tarde" | "Noche" | "Nocturna"
+  turno: string;       // "Mañana" | "Tarde" | "Noche"
   imagen_url: string;
   infographic_url?: string;
   descripcion: string;

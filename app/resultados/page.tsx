@@ -5,6 +5,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { WhatsAppButton } from "@/components/whatsapp-button"
 import { ResultadosFiltros } from "@/components/resultados-filtros"
+import { HistorialList } from "@/components/historial-list"
 import { getResultados } from "@/lib/api"
 import type { Resultado } from "@/lib/types"
 import { normalizeAnimalName } from "@/lib/animals"
@@ -185,39 +186,6 @@ function HeroResultado({ resultado }: { resultado: Resultado }) {
   )
 }
 
-function FilaResultado({ resultado, index }: { resultado: Resultado; index: number }) {
-  return (
-    <div className="group flex items-center gap-3 px-4 py-3 rounded-xl
-                    hover:bg-primary/5 transition-colors duration-150 cursor-default">
-      <span className="flex-shrink-0 w-6 text-center text-xs font-bold text-muted-foreground/40">
-        {index + 1}
-      </span>
-
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm truncate">
-          {normalizeAnimalName(resultado.animal)}
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          {formatFechaLarga(resultado.fecha)}
-          {resultado.turno && (
-            <> · <span className="text-primary/70">{resultado.turno}</span></>
-          )}
-          {resultado.infographic_url && (
-            <> · <a
-              href={resultado.infographic_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary/60 hover:text-primary transition-colors underline underline-offset-2"
-            >ver infografía</a></>
-          )}
-        </p>
-      </div>
-
-      {/* Separador decorativo */}
-      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-border group-hover:bg-primary/40 transition-colors" />
-    </div>
-  )
-}
 
 function EstadoVacio() {
   return (
@@ -296,19 +264,22 @@ export default async function ResultadosPage({ searchParams }: PageProps) {
         {/* Barra de acento superior */}
         <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary" />
 
-        {/* ── Cabecera de color ─────────────────────────────────────────── */}
-        <div className="bg-background pt-24 pb-20 px-4">
+        {/* ── Cabecera con patrón geométrico ───────────────────────────── */}
+        <div
+          className="bg-brand-hero pt-24 pb-20 px-4"
+          style={{ backgroundColor: '#009640' }}
+        >
           <div className="max-w-6xl mx-auto">
-            <nav className="mb-5 flex items-center gap-2 text-sm text-muted-foreground">
-              <Link href="/" className="hover:text-foreground transition-colors">Inicio</Link>
-              <span className="opacity-40">/</span>
-              <span className="text-foreground">Resultados</span>
+            <nav className="mb-5 flex items-center gap-2 text-sm text-white/50">
+              <Link href="/" className="hover:text-white/80 transition-colors">Inicio</Link>
+              <span className="text-white/30">/</span>
+              <span className="text-white/80">Resultados</span>
             </nav>
             <h1 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
-                           text-foreground uppercase tracking-tight leading-none mb-3">
+                           text-white uppercase tracking-tight leading-none mb-3">
               Resultados
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-white/60 text-lg">
               Consultá el último resultado y el historial completo de sorteos.
             </p>
           </div>
@@ -344,28 +315,7 @@ export default async function ResultadosPage({ searchParams }: PageProps) {
 
                     {/* Historial */}
                     {anteriores.length > 0 && (
-                      <section className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
-                        {/* Encabezado de sección */}
-                        <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between">
-                          <h2 className="font-[family-name:var(--font-gunterz)] text-sm text-foreground
-                                         uppercase tracking-wider">
-                            {isFiltered ? "Resultados" : "Historial"}{" "}
-                            <span className="text-primary">
-                              {isFiltered ? "Filtrados" : "de Sorteos"}
-                            </span>
-                          </h2>
-                          <span className="text-xs text-muted-foreground">
-                            {anteriores.length} sorteo{anteriores.length !== 1 ? "s" : ""}
-                          </span>
-                        </div>
-
-                        {/* Lista */}
-                        <div className="py-2">
-                          {anteriores.map((resultado, i) => (
-                            <FilaResultado key={resultado.id} resultado={resultado} index={i} />
-                          ))}
-                        </div>
-                      </section>
+                      <HistorialList resultados={anteriores} isFiltered={isFiltered} />
                     )}
                   </>
                 )}
