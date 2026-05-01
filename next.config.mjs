@@ -43,7 +43,7 @@ const nextConfig = {
               [
                 "img-src 'self' data: blob:",
                 "https://api.loteriadeanimales.com.py",
-                "https://api.187.77.251.126.nip.io",
+                "https://backoffice.187.77.251.126.nip.io",
                 "https://hebbkx1anhila5yf.public.blob.vercel-storage.com",
                 "https://*.basemaps.cartocdn.com",
                 isDev ? "http://loteria-animales.local http://localhost:3000" : "",
@@ -53,7 +53,7 @@ const nextConfig = {
               [
                 "connect-src 'self'",
                 "https://api.loteriadeanimales.com.py",
-                "https://api.187.77.251.126.nip.io",
+                "https://backoffice.187.77.251.126.nip.io",
                 isDev ? "http://loteria-animales.local http://localhost:3000" : "",
               ].filter(Boolean).join(' '),
               "frame-ancestors 'none'",
@@ -75,7 +75,7 @@ const nextConfig = {
       // Staging (nip.io) — remover tras el pase a producción
       {
         protocol: 'https',
-        hostname: 'api.187.77.251.126.nip.io',
+        hostname: 'backoffice.187.77.251.126.nip.io',
       },
       // Vercel Blob — mantener hasta migrar todas las imágenes al VPS
       {
