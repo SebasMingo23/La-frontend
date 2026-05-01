@@ -20,7 +20,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const { fecha, turno } = await searchParams
 
   try {
-    const resultados = await getResultados(1, fecha, turno)
+    const resultados = await getResultados(1, 0, fecha, turno)
     if (resultados.length > 0) {
       const r = resultados[0]
       const animalDisplay = normalizeAnimalName(r.animal)
