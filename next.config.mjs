@@ -1,10 +1,32 @@
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === 'development'
+const WP_URL = (process.env.NEXT_PUBLIC_WP_URL ?? 'https://backoffice.187.77.251.126.nip.io').replace(/\/$/, '')
 
 const nextConfig = {
   output: 'standalone',
   typescript: {
     ignoreBuildErrors: false,
+  },
+
+  // ─── Redirects admin WP ──────────────────────────────────────────────────
+  async redirects() {
+    return [
+      {
+        source: '/wp-admin',
+        destination: `${WP_URL}/wp-admin/`,
+        permanent: true,
+      },
+      {
+        source: '/wp-admin/:path*',
+        destination: `${WP_URL}/wp-admin/:path*`,
+        permanent: true,
+      },
+      {
+        source: '/wp-login.php',
+        destination: `${WP_URL}/wp-login.php`,
+        permanent: true,
+      },
+    ]
   },
 
   // ─── Security Headers ─────────────────────────────────────────────────────
