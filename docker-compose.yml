@@ -18,7 +18,7 @@ services:
   #  Único servicio con puertos expuestos al host (80 y 443).
   # ──────────────────────────────────────────────────────────────
   traefik:
-    image: traefik:v3.1
+    image: traefik:v3.6.1
     restart: unless-stopped
     environment:
       # FIX: el cliente Go de Traefik negocia API v1.24 por defecto.
