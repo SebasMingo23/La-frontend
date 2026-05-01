@@ -20,11 +20,11 @@ export const getUltimoResultado = () =>
   apiFetch<UltimoResultado>('/ultimo-resultado', 30)
 
 
-export const getResultados = (limit = 20, fecha?: string, turno?: string) => {
-  const params = new URLSearchParams({ limit: String(limit) })
+export const getResultados = (limit = 6, offset = 0, fecha?: string, turno?: string) => {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) })
   if (fecha) params.set('fecha', fecha)
   if (turno) params.set('turno', turno)
-  return apiFetch<Resultado[]>(`/resultados?${params.toString()}`, 60)
+  return apiFetch<Resultado[]>(`/resultados?${params.toString()}`, 10)
 }
 
 export const getLocales = () =>

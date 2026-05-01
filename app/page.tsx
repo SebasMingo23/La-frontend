@@ -9,17 +9,17 @@ import { LocationsSection } from "@/components/locations-section"
 import { HowToPlaySection } from "@/components/how-to-play-section"
 import { Footer } from "@/components/footer"
 import { WhatsAppButton } from "@/components/whatsapp-button"
-import { getDreamsDictionary, getUltimoResultado } from "@/lib/api"
+import { getDreamsDictionary, getResultados } from "@/lib/api"
 import { ScrollBackground } from "@/components/scroll-background"
 
 export default async function Home() {
-  const [dreamEntries, ultimoResultado] = await Promise.all([
+  const [dreamEntries, resultados] = await Promise.all([
     getDreamsDictionary().catch(() => []),
-    getUltimoResultado().catch(() => null),
+    getResultados(1).catch(() => []),
   ])
 
-  const winnerAnimalId = ultimoResultado?.animal_id != null
-    ? Number(ultimoResultado.animal_id)
+  const winnerAnimalId = resultados[0]?.numero != null
+    ? parseInt(resultados[0].numero, 10)
     : null
 
   return (

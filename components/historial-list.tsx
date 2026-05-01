@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import type { Resultado } from "@/lib/types"
 import { normalizeAnimalName } from "@/lib/animals"
+import { WORDPRESS_API_URL } from "@/lib/constants"
 
 function formatFechaLarga(fechaStr: string): string {
   if (!fechaStr) return "—"
@@ -68,13 +69,49 @@ function FilaResultado({
 interface HistorialListProps {
   resultados: Resultado[]
   isFiltered: boolean
+  nextOffset: number
+  perPage: number
+  fecha?: string
+  turno?: string
+  initialHasMore: boolean
 }
 
-export function HistorialList({ resultados, isFiltered }: HistorialListProps) {
+export function HistorialList({
+  resultados,
+  isFiltered,
+  nextOffset,
+  perPage,
+  fecha,
+  turno,
+  initialHasMore,
+}: HistorialListProps) {
+  const [items, setItems]               = useState<Resultado[]>(resultados)
+  const [offset, setOffset]             = useState(nextOffset)
+  const [hasMore, setHasMore]           = useState(initialHasMore)
+  const [loadingMore, setLoadingMore]   = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   // mounted guard: createPortal necesita document.body, que no existe en SSR
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true)
+    try {
+      const params = new URLSearchParams({ limit: String(perPage), offset: String(offset) })
+      if (fecha) params.set('fecha', fecha)
+      if (turno) params.set('turno', turno)
+      const res = await fetch(`${WORDPRESS_API_URL}/resultados?${params}`)
+      if (!res.ok) throw new Error('fetch error')
+      const data: Resultado[] = await res.json()
+      setItems(prev => [...prev, ...data])
+      setOffset(prev => prev + perPage)
+      setHasMore(data.length === perPage)
+    } catch {
+      // si falla, no rompe la UI — el botón queda visible para reintentar
+    } finally {
+      setLoadingMore(false)
+    }
+  }
 
   useEffect(() => {
     if (!selectedImage) return
@@ -94,12 +131,12 @@ export function HistorialList({ resultados, isFiltered }: HistorialListProps) {
             </span>
           </h2>
           <span className="text-xs text-muted-foreground">
-            {resultados.length} sorteo{resultados.length !== 1 ? "s" : ""}
+            {items.length} sorteo{items.length !== 1 ? "s" : ""}
           </span>
         </div>
 
         <div className="py-2">
-          {resultados.map((resultado, i) => (
+          {items.map((resultado, i) => (
             <FilaResultado
               key={resultado.id}
               resultado={resultado}
@@ -108,6 +145,37 @@ export function HistorialList({ resultados, isFiltered }: HistorialListProps) {
             />
           ))}
         </div>
+
+        {hasMore && (
+          <div className="px-5 py-4 border-t border-border/60 flex justify-center">
+            <button
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold uppercase tracking-wide
+                         text-primary border border-primary/30 bg-primary/5
+                         hover:bg-primary/10 hover:border-primary/50
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         transition-all duration-200"
+            >
+              {loadingMore ? (
+                <>
+                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                  </svg>
+                  Cargando…
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Cargar más sorteos
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* ── Lightbox (Portal → document.body, escapa de cualquier stacking context) */}

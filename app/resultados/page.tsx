@@ -247,14 +247,18 @@ export default async function ResultadosPage({ searchParams }: PageProps) {
   const { fecha, turno } = await searchParams
   let resultados: Resultado[] = []
 
+  const PER_PAGE = 5
+
   try {
-    resultados = await getResultados(50, fecha, turno)
+    // Fetch PER_PAGE + 1 para detectar si hay más resultados sin hacer una segunda llamada
+    resultados = await getResultados(PER_PAGE + 1, 0, fecha, turno)
   } catch {
     // API no disponible → estado vacío
   }
 
   const isFiltered = !!(fecha || turno)
-  const [ultimo, ...anteriores] = resultados
+  const initialHasMore = resultados.length > PER_PAGE
+  const [ultimo, ...anteriores] = resultados.slice(0, PER_PAGE + 1)
 
   return (
     <>
@@ -315,7 +319,15 @@ export default async function ResultadosPage({ searchParams }: PageProps) {
 
                     {/* Historial */}
                     {anteriores.length > 0 && (
-                      <HistorialList resultados={anteriores} isFiltered={isFiltered} />
+                      <HistorialList
+                        resultados={anteriores}
+                        isFiltered={isFiltered}
+                        nextOffset={PER_PAGE + 1}
+                        perPage={PER_PAGE}
+                        fecha={fecha}
+                        turno={turno}
+                        initialHasMore={initialHasMore}
+                      />
                     )}
                   </>
                 )}
