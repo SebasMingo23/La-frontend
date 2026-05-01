@@ -151,12 +151,20 @@ export function MapaInteractivo({ locales, selectedId, onSelectLocal }: Props) {
 
     return () => {
       cancelled = true
-      if (flyTimeoutRef.current) clearTimeout(flyTimeoutRef.current)
-      if (mapRef.current) {
-        mapRef.current.remove()
-        mapRef.current = null
-        markersRef.current = {}
+      if (flyTimeoutRef.current) {
+        clearTimeout(flyTimeoutRef.current)
+        flyTimeoutRef.current = null
       }
+      if (mapRef.current) {
+        // _animatingZoom=false makes _onZoomTransitionEnd a no-op if the stale
+        // CSS transitionend event fires after map.remove() clears _mapPane.
+        try { mapRef.current._animatingZoom = false } catch {}
+        try { mapRef.current.stop() } catch {}
+        try { mapRef.current.remove() } catch {}
+        mapRef.current = null
+      }
+      markersRef.current = {}
+      LRef.current = null
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -169,32 +177,40 @@ export function MapaInteractivo({ locales, selectedId, onSelectLocal }: Props) {
   }, [selectedId])
 
   function performFlyTo(id: number | null, L: any) {
-    // Resetear ícono de todos los marcadores
+    if (!mapRef.current) return   // guard first — map may have been removed
+
     Object.entries(markersRef.current).forEach(([markerId, marker]) => {
+      if (!mapRef.current) return
       const isNowSelected = Number(markerId) === id
-      marker.setIcon(
-        L.divIcon({
-          className: "",
-          html: makeMarkerHtml(isNowSelected),
-          iconSize: [isNowSelected ? 44 : 36, isNowSelected ? 44 : 36],
-          iconAnchor: [isNowSelected ? 22 : 18, isNowSelected ? 44 : 36],
-          popupAnchor: [0, -40],
-        })
-      )
+      try {
+        marker.setIcon(
+          L.divIcon({
+            className: "",
+            html: makeMarkerHtml(isNowSelected),
+            iconSize: [isNowSelected ? 44 : 36, isNowSelected ? 44 : 36],
+            iconAnchor: [isNowSelected ? 22 : 18, isNowSelected ? 44 : 36],
+            popupAnchor: [0, -40],
+          })
+        )
+      } catch {}
     })
 
     if (!id || !mapRef.current) return
     const local = locales.find((l) => l.id === id)
     const marker = markersRef.current[id]
-    if (!local || !marker) return
+    if (!local || !marker || !mapRef.current) return
 
     const lat = parseFloat(local.latitud)
     const lng = parseFloat(local.longitud)
     if (isNaN(lat) || isNaN(lng)) return
 
-    mapRef.current.flyTo([lat, lng], 16, { animate: true, duration: 1.2 })
-    if (flyTimeoutRef.current) clearTimeout(flyTimeoutRef.current)
-    flyTimeoutRef.current = setTimeout(() => marker.openPopup(), 1100)
+    try {
+      mapRef.current.flyTo([lat, lng], 16, { animate: true, duration: 1.2 })
+      if (flyTimeoutRef.current) clearTimeout(flyTimeoutRef.current)
+      flyTimeoutRef.current = setTimeout(() => {
+        if (mapRef.current) marker.openPopup()
+      }, 1100)
+    } catch {}
   }
 
   return (

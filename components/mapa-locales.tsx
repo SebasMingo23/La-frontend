@@ -38,7 +38,9 @@ export function MapaLocales({ locales, onSelectLocal }: Props) {
   const mapRef = useRef<any>(null)
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return
+    // Skip initialization until we have actual data — avoids a pointless Leaflet
+    // init with 0 markers that then races with the Strict Mode unmount/remount.
+    if (!containerRef.current || mapRef.current || locales.length === 0) return
     let cancelled = false
 
     // Asunción, Paraguay — centro por defecto
@@ -116,7 +118,9 @@ export function MapaLocales({ locales, onSelectLocal }: Props) {
     return () => {
       cancelled = true
       if (mapRef.current) {
-        mapRef.current.remove()
+        try { mapRef.current._animatingZoom = false } catch {}
+        try { mapRef.current.stop() } catch {}
+        try { mapRef.current.remove() } catch {}
         mapRef.current = null
       }
     }

@@ -56,7 +56,13 @@ export default async function SobreLaLoteriaPage() {
         <div className="px-4 pb-24 max-w-4xl mx-auto">
           {html ? (
             <article
-              className="wp-content bg-card rounded-[2.5rem] p-8 md:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.3)]"
+              className="wp-content bg-card rounded-[2.5rem] p-8 md:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.3)]
+                         [&_p]:text-slate-700 dark:[&_p]:text-gray-300
+                         [&_li]:text-slate-700 dark:[&_li]:text-gray-300
+                         [&_ul]:text-slate-700 dark:[&_ul]:text-gray-300
+                         [&_ol]:text-slate-700 dark:[&_ol]:text-gray-300
+                         [&_strong]:text-slate-900 dark:[&_strong]:text-white
+                         [&_td]:text-slate-700 dark:[&_td]:text-gray-300"
               dangerouslySetInnerHTML={{ __html: sanitizeWpHtml(html ?? "") }}
             />
           ) : (

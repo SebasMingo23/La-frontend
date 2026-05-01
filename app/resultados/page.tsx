@@ -299,16 +299,16 @@ export default async function ResultadosPage({ searchParams }: PageProps) {
         {/* ── Cabecera de color ─────────────────────────────────────────── */}
         <div className="bg-background pt-24 pb-20 px-4">
           <div className="max-w-6xl mx-auto">
-            <nav className="mb-5 flex items-center gap-2 text-sm text-white/50">
-              <Link href="/" className="hover:text-white/80 transition-colors">Inicio</Link>
-              <span className="text-white/30">/</span>
-              <span className="text-white/80">Resultados</span>
+            <nav className="mb-5 flex items-center gap-2 text-sm text-muted-foreground">
+              <Link href="/" className="hover:text-foreground transition-colors">Inicio</Link>
+              <span className="opacity-40">/</span>
+              <span className="text-foreground">Resultados</span>
             </nav>
             <h1 className="font-[family-name:var(--font-gunterz)] text-5xl md:text-6xl lg:text-7xl
-                           text-white uppercase tracking-tight leading-none mb-3">
+                           text-foreground uppercase tracking-tight leading-none mb-3">
               Resultados
             </h1>
-            <p className="text-white/60 text-lg">
+            <p className="text-muted-foreground text-lg">
               Consultá el último resultado y el historial completo de sorteos.
             </p>
           </div>
